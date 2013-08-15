@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>SKU Wrapper Demo</title>
+
+    <link rel="stylesheet" href="sku.css"/>
+    <script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
+    <script type="text/javascript" src="sku.js"></script>
+</head>
+<body>
+<div class="tb-skin  tb-naked ">
+    <dl class="tb-prop J_Prop tb-clearfix">
+        <dt class="tb-property-type">版本：</dt>
+        <dd>
+            <ul data-property="版本" class="tb-clearfix J_TSaleProp  ">
+                <li data-value="20525:27772"><a href="#"><span>中国大陆</span></a></li>
+                <li data-value="20525:9507519"><a href="#"><span>港澳台</span></a></li>
+                <li data-value="20525:29148"><a href="#"><span>欧洲</span></a></li>
+            </ul>
+        </dd>
+    </dl>
+    <dl class="tb-prop J_Prop tb-clearfix">
+        <dt class="tb-property-type">机身颜色：</dt>
+        <dd>
+            <ul data-property="机身颜色" class="tb-clearfix J_TSaleProp tb-img  ">
+                <li data-value="1627207:60092" title="浅黄色" class="tb-txt">
+                    <a href="#">
+                        <span>浅黄色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:28341" title="黑色" class="tb-txt">
+                    <a href="#">
+                        <span>黑色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:28338" title="蓝色" class="tb-txt">
+                    <a href="#">
+                        <span>蓝色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:28332" title="浅灰色" class="tb-txt">
+                    <a href="#">
+                        <span>浅灰色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:28324" title="黄色" class="tb-txt">
+                    <a href="#">
+                        <span>黄色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:28320" title="白色" class="tb-txt">
+                    <a href="#">
+                        <span>白色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:30156" title="浅绿色" class="tb-txt">
+                    <a href="#">
+                        <span>浅绿色</span>
+                    </a>
+                    </li>
+                <li data-value="1627207:3229299" title="红" class="tb-txt">
+                    <a href="#">
+                        <span>红</span>
+                    </a>
+                    </li>
+            </ul>
+        </dd>
+    </dl>
+    <dl class="tb-prop J_Prop tb-clearfix">
+        <dt class="tb-property-type">手机套餐：</dt>
+        <dd>
+            <ul data-property="手机套餐" class="tb-clearfix J_TSaleProp  ">
+                <li data-value="1630696:6536025"><a href="#"><span>官方标配</span></a></li>
+                <li data-value="1630696:3266781"><a href="#"><span>套餐二</span></a></li>
+                <li data-value="1630696:3266785"><a href="#"><span>套餐三</span></a></li>
+            </ul>
+        </dd>
+    </dl>
+    <dl class="tb-prop J_Prop tb-clearfix">
+        <dt class="tb-property-type">机身内存：</dt>
+        <dd>
+            <ul data-property="机身内存" class="tb-clearfix J_TSaleProp  ">
+                <li data-value="12304035:116177"><a href="#"><span>32G</span></a></li>
+            </ul>
+        </dd>
+    </dl>
+
+</div>
+
+<script>
+(function (S) {
+
+
+    S.config({
+                 packages: [
+                     {
+                         name: 'sku',
+                         path: '../'
+                     }
+                 ]
+             });
+
+
+    S.use('sku', function (S, SKU) {
+        var config = {
+            skuMap:    {
+                ";20525:9507519;1627207:30156;1630696:6536025;12304035:116177;":   {
+                    "skuId":    "30171814678",
+                    "oversold": "true",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3005.00",
+                    "stock":    "1"
+                },
+                ";20525:27772;1627207:28320;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "31000442740",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3780.00",
+                    "stock":    "650"
+                },
+                ";20525:27772;1627207:28320;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "31000442741",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3670.00",
+                    "stock":    "1887"
+                },
+                ";20525:27772;1627207:28320;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "31000442742",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3540.00",
+                    "stock":    "699"
+                },
+                ";20525:27772;1627207:28324;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "31000442743",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3780.00",
+                    "stock":    "197"
+                },
+                ";20525:27772;1627207:28324;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "31000442744",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3670.00",
+                    "stock":    "1999"
+                },
+                ";20525:27772;1627207:28324;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "31000442745",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3540.00",
+                    "stock":    "183"
+                },
+                ";20525:27772;1627207:28332;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "31000442746",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3780.00",
+                    "stock":    "155"
+                },
+                ";20525:27772;1627207:28332;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "31000442747",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3670.00",
+                    "stock":    "154"
+                },
+                ";20525:27772;1627207:28332;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "31000442748",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3540.00",
+                    "stock":    "1320"
+                },
+                ";20525:27772;1627207:28338;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "31000442749",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3715.00",
+                    "stock":    "147"
+                },
+                ";20525:27772;1627207:28338;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "31000442750",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3605.00",
+                    "stock":    "196"
+                },
+                ";20525:27772;1627207:28338;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "31000442751",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3475.00",
+                    "stock":    "141"
+                },
+                ";20525:27772;1627207:28341;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "31000442752",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3780.00",
+                    "stock":    "554"
+                },
+                ";20525:27772;1627207:28341;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "31000442753",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3670.00",
+                    "stock":    "555"
+                },
+                ";20525:27772;1627207:28341;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "31000442754",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3540.00",
+                    "stock":    "196"
+                },
+                ";20525:27772;1627207:3229299;1630696:3266781;12304035:116177;":   {
+                    "skuId":    "31000442758",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3690.00",
+                    "stock":    "78"
+                },
+                ";20525:27772;1627207:3229299;1630696:3266785;12304035:116177;":   {
+                    "skuId":    "31000442759",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3580.00",
+                    "stock":    "188"
+                },
+                ";20525:27772;1627207:3229299;1630696:6536025;12304035:116177;":   {
+                    "skuId":    "31000442760",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3450.00",
+                    "stock":    "77"
+                },
+                ";20525:27772;1627207:60092;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "31000442761",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3740.00",
+                    "stock":    "15"
+                },
+                ";20525:27772;1627207:60092;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "31000442762",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3630.00",
+                    "stock":    "15"
+                },
+                ";20525:27772;1627207:60092;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "31000442763",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3500.00",
+                    "stock":    "15"
+                },
+                ";20525:9507519;1627207:3229299;1630696:3266781;12304035:116177;": {
+                    "skuId":    "31000442788",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3550.00",
+                    "stock":    "5"
+                },
+                ";20525:9507519;1627207:3229299;1630696:3266785;12304035:116177;": {
+                    "skuId":    "31000442789",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3430.00",
+                    "stock":    "5"
+                },
+                ";20525:9507519;1627207:3229299;1630696:6536025;12304035:116177;": {
+                    "skuId":    "31000442790",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3300.00",
+                    "stock":    "5"
+                },
+                ";20525:29148;1627207:28320;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "47739320817",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3245.00",
+                    "stock":    "133"
+                },
+                ";20525:29148;1627207:28320;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "47739320818",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3135.00",
+                    "stock":    "343"
+                },
+                ";20525:29148;1627207:28320;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "47739320819",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3005.00",
+                    "stock":    "231"
+                },
+                ";20525:29148;1627207:28341;1630696:3266781;12304035:116177;":     {
+                    "skuId":    "47739320820",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3245.00",
+                    "stock":    "379"
+                },
+                ";20525:29148;1627207:28341;1630696:3266785;12304035:116177;":     {
+                    "skuId":    "47739320821",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3135.00",
+                    "stock":    "390"
+                },
+                ";20525:29148;1627207:28341;1630696:6536025;12304035:116177;":     {
+                    "skuId":    "47739320822",
+                    "oversold": "false",
+                    "tagPrice": "",
+                    "spPrice":  "",
+                    "price":    "3005.00",
+                    "stock":    "268"
+                }
+            },
+            container: "#container"
+        };
+
+        var sku = new SKU(config);
+        sku.destroy();
+
+    });
+
+
+})(KISSY);
+
+
+</script>
+
+</body>
+</html>

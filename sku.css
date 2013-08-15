@@ -1,0 +1,52 @@
+* {
+    margin: 0;
+    padding: 0;
+    color: #333;
+    font-size: 14px;
+}
+
+body {
+    padding: 15px;
+}
+
+dt, dd {
+    display: inline-block;
+    height: 18px;
+    line-height: 18px;
+}
+
+dl {
+    margin-bottom: 15px;
+}
+
+a {
+    text-decoration: none;
+
+}
+
+li {
+    color: #333;
+    display: inline-block;
+    height: 18px;
+    line-height: 18px;
+    margin-right: 15px;
+    outline: 2px #ccc solid;
+    padding: 0 5px;
+
+}
+
+li.selected {
+    outline: 2px solid #f60;
+}
+
+ul {
+    list-style: none;
+}
+
+ul:after {
+    display: block;
+    visibility: hidden;
+    counter-reset: ".";
+    height: 0;
+    clear: both;
+}
