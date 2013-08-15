@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Demo</title>
+    <style type="text/css">
+        .bh-sku-selected {color: red;}
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+<div>
+属性1：
+<input type="button" class="sku" attr_id="10" value="10"/>
+<input type="button" class="sku" attr_id="11" value="11"/>
+<input type="button" class="sku" attr_id="12" value="12"/>
+</div>
+
+<div>
+属性2：
+<input type="button" class="sku" attr_id="20" value="20"/>
+<input type="button" class="sku" attr_id="21" value="21"/>
+</div>
+
+<div>
+属性3：
+<input type="button" class="sku" attr_id="30" value="30"/>
+<input type="button" class="sku" attr_id="31" value="31"/>
+<input type="button" class="sku" attr_id="32" value="32"/>
+</div>
+
+<span id="price">--</span> </br>
+
+<script type="text/javascript">
+
+
+//测试结果集
+var data = {
+    "10;20;30": {
+        price: 100,
+        count: 1
+    },
+    "10;20;31": {
+        price: 111,
+        count: 2
+    },
+    "11;20;30": {
+        price: 122,
+        count: 1
+    },
+    "10;21;31": {
+        price: 133,
+        count: 2
+    },
+    "10;21;32": {
+        price: 144,
+        count: 9
+    }
+}
+//保存最后的组合结果信息
+var SKUResult = {};
+//获得对象的key
+function getObjKeys(obj) {
+    if (obj !== Object(obj)) throw new TypeError('Invalid object');
+    var keys = [];
+    for (var key in obj)
+        if (Object.prototype.hasOwnProperty.call(obj, key))
+            keys[keys.length] = key;
+    return keys;
+}
+//把组合的key放入结果集SKUResult
+function add2SKUResult(key, sku) {
+    if(SKUResult[key]) {//SKU信息key属性·
+        SKUResult[key].count += sku.count;
+        SKUResult[key].prices.push(sku.price);
+    } else {
+        SKUResult[key] = {
+            count : sku.count,
+            prices : [sku.price]
+        };
+    }
+}
+//对一条SKU信息进行拆分组合
+function combineSKU(skuKeyAttrs, cnum, sku) {
+    var len = skuKeyAttrs.length;
+    for(var i = 0; i < len; i++) {
+        var key = skuKeyAttrs[i];
+        for(var j = i+1; j < len; j++) {
+            if(j + cnum <= len) {
+                var tempArr = skuKeyAttrs.slice(j, j+cnum);    //安装组合个数获得属性值·
+                var genKey = key + ";" + tempArr.join(";");    //得到一个组合key
+                add2SKUResult(genKey, sku);
+            }
+        }
+    }
+}
+//初始化得到结果集
+function initSKU() {
+    var i, j, skuKeys = getObjKeys(data);
+    for(i = 0; i < skuKeys.length; i++) {
+        var skuKey = skuKeys[i];//一条SKU信息key
+        var sku = data[skuKey];    //一条SKU信息value
+        var skuKeyAttrs = skuKey.split(";"); //SKU信息key属性值数组
+        var len = skuKeyAttrs.length;
+
+        //对每个SKU信息key属性值进行拆分组合
+        for(j = 0; j < len; j++) {
+            //单个属性值作为key直接放入SKUResult
+            add2SKUResult(skuKeyAttrs[j], sku);
+            //对本组SKU信息key属性进行组合，组合个数为j
+            (j > 0 && j < len-1) && combineSKU(skuKeyAttrs, j, sku);
+        }
+
+        //结果集接放入SKUResult
+        SKUResult[skuKey] = {
+            count:sku.count,
+            prices:[sku.price]
+        }
+    }
+}
+//初始化用户选择事件
+$(function() {
+    initSKU();
+    $('.sku').each(function() {
+        var self = $(this);
+        var attr_id = self.attr('attr_id');
+        if(!SKUResult[attr_id]) {
+            self.attr('disabled', 'disabled');
+        }
+    }).click(function() {
+        debugger;
+        var self = $(this);
+
+        // 切换被点击SKU 的class，去除其所在属性其它的sku 的 class
+        self.toggleClass('bh-sku-selected').siblings().removeClass('bh-sku-selected');
+
+        var selectedObjs = $('.bh-sku-selected');
+        if(selectedObjs.length) {
+            //获得组合key价格
+            var selectedIds = [];
+            selectedObjs.each(function() {
+                selectedIds.push($(this).attr('attr_id'));
+            });
+            selectedIds.sort(function(value1, value2) {
+                return parseInt(value1) - parseInt(value2);
+            });
+            var len = selectedIds.length;
+            var prices = SKUResult[selectedIds.join(';')].prices;
+            var maxPrice = Math.max.apply(Math, prices);
+            var minPrice = Math.min.apply(Math, prices);
+            $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
+
+            //用已选中的节点验证待测试节点 underTestObjs
+            $(".sku").not(selectedObjs).not(self).each(function() {
+                var siblingsSelectedObj = $(this).siblings('.bh-sku-selected');
+                var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
+                if(siblingsSelectedObj.length) {
+                    var siblingsSelectedObjId = siblingsSelectedObj.attr('attr_id');
+                    for(var i = 0; i < len; i++) {
+                        (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
+                    }
+                } else {
+                    testAttrIds = selectedIds.concat();
+                }
+                testAttrIds = testAttrIds.concat($(this).attr('attr_id'));
+                testAttrIds.sort(function(value1, value2) {
+                    return parseInt(value1) - parseInt(value2);
+                });
+                if(!SKUResult[testAttrIds.join(';')]) {
+                    $(this).attr('disabled', 'disabled').removeClass('bh-sku-selected');
+                } else {
+                    $(this).removeAttr('disabled');
+                }
+            });
+        } else {
+            //设置默认价格
+            $('#price').text('--');
+            //设置属性状态
+            $('.sku').each(function() {
+                SKUResult[$(this).attr('attr_id')] ? $(this).removeAttr('disabled') : $(this).attr('disabled', 'disabled').removeClass('bh-sku-selected');
+            })
+        }
+    });
+});
+
+</script>
+</body>
+</html>

@@ -50,3 +50,7 @@ ul:after {
     height: 0;
     clear: both;
 }
+
+.tb-txt a span {
+    color: red;
+}

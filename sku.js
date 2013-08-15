@@ -10,11 +10,27 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             return;
         }
 
+        var map = config.skuMap,
+            result = {};
+
+
+
+
+        for (var key in map) {
+
+
+        }
+
+
     }
 
-    return {
+    S.augment(SKU,{
         destroy: function () {
-            alert("I'm destroyed... ~_~");
+            S.log('destroyed');
         }
-    }
+    });
+
+
+
+    return SKU;
 }, {requires: ['dom', 'node', 'event']});
