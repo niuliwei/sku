@@ -6,7 +6,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
     function SKU(config) {
         if (!config) {
-            S.log('SKU 组件：配置为空，无法');
+            S.log('SKU 组件：配置为空，无法初始化');
             return;
         }
 
