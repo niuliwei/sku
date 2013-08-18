@@ -419,7 +419,6 @@ $(function() {
         }
     }).click(function() {
         var self = $(this);
-                     debugger;
 
         // 切换被点击SKU 的class，去除其所在属性其它的sku 的 class
         self.toggleClass('selected').siblings().removeClass('selected');
@@ -441,7 +440,7 @@ $(function() {
             $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
             //用已选中的节点验证待测试节点 underTestObjs
-            $(".J_TSaleProp").not(selectedObjs).not(self).each(function() {
+            $(".J_TAtom").not(selectedObjs).not(self).each(function() {
                 var siblingsSelectedObj = $(this).siblings('.selected');
                 var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
                 if(siblingsSelectedObj.length) {
@@ -457,17 +456,17 @@ $(function() {
                     return parseInt(value1) - parseInt(value2);
                 });
                 if(!SKUResult[testAttrIds.join(';')]) {
-                    $(this).attr('disabled', 'disabled').removeClass('selected');
+                    $(this).addClass('disabled').removeClass('selected');
                 } else {
-                    $(this).removeAttr('disabled');
+                    $(this).removeClass('disabled');
                 }
             });
         } else {
             //设置默认价格
             $('#price').text('--');
             //设置属性状态
-            $('.J_TSaleProp').each(function() {
-                SKUResult[$(this).attr('data-value')] ? $(this).removeAttr('disabled') : $(this).attr('disabled', 'disabled').removeClass('selected');
+            $('.J_TAtom').each(function() {
+                SKUResult[$(this).attr('data-value')] ? $(this).removeClass('disabled') : $(this).addClass('disabled').removeClass('selected');
             })
         }
     });

@@ -39,6 +39,10 @@ li.selected {
     outline: 2px solid #f60;
 }
 
+li.disabled {
+    outline: 2px solid darkgreen;
+}
+
 ul {
     list-style: none;
 }
