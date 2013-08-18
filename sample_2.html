@@ -27,44 +27,44 @@
         <dd>
             <ul data-property="机身颜色" class="tb-clearfix J_TSaleProp tb-img  ">
                 <li data-value="1627207:60092" class="J_TAtom" title="浅黄色" >
-                    
+
                         浅黄色
-                    
+
                     </li>
                 <li data-value="1627207:28341" class="J_TAtom" title="黑色" >
-                    
+
                         黑色
-                    
+
                     </li>
                 <li data-value="1627207:28338" class="J_TAtom" title="蓝色" >
-                    
+
                         蓝色
-                    
+
                     </li>
                 <li data-value="1627207:28332" class="J_TAtom" title="浅灰色" >
-                    
+
                         浅灰色
-                    
+
                     </li>
                 <li data-value="1627207:28324" class="J_TAtom" title="黄色" >
-                    
+
                         黄色
-                    
+
                     </li>
                 <li data-value="1627207:28320" class="J_TAtom" title="白色" >
-                    
+
                         白色
-                    
+
                     </li>
                 <li data-value="1627207:30156" class="J_TAtom" title="浅绿色" >
-                    
+
                         浅绿色
-                    
+
                     </li>
                 <li data-value="1627207:3229299" class="J_TAtom" title="红" >
-                    
+
                         红
-                    
+
                     </li>
             </ul>
         </dd>
@@ -346,9 +346,20 @@ var data = {
                     "price":    "3005.00",
                     "stock":    "268"
                 }
-            }
+    }
+var tempData = {};
+for (var key in data) {
+    var newKey = key.replace(/^;|;$/gi,'');
+    tempData[newKey] = data[key];
+}
+data =tempData;
 //保存最后的组合结果信息
 var SKUResult = {};
+var count = 0;
+var log = function(msg){
+    console.log(msg);
+    console.log(++count);
+}
 //获得对象的key
 function getObjKeys(obj) {
     if (obj !== Object(obj)) throw new TypeError('Invalid object');
@@ -370,15 +381,42 @@ function add2SKUResult(key, sku) {
         };
     }
 }
+
+function sortKeys(arr) {
+    // []
+    var holder = {}
+    for (var i = 0; i < arr.length; i++) {
+        var key = arr[i], newKey = key.replace(';');
+        holder[newKey] = key;
+        arr[i] = newKey;
+    }
+    arr.sort(function (a, b) {
+        return parseInt(a) - parseInt(b);
+    })
+    for (var i = 0; i < arr.length; i++) {
+        arr[i] = holder[arr[i]];
+    }
+
+    return arr;
+
+}
 //对一条SKU信息进行拆分组合
-function combineSKU(skuKeyAttrs, cnum, sku) {
+function combineSKU(skuKeyAttrs, cnum, sku, doLog ) {
+    if (doLog) {
+//        debugger;
+    }
     var len = skuKeyAttrs.length;
     for(var i = 0; i < len; i++) {
         var key = skuKeyAttrs[i];
         for(var j = i+1; j < len; j++) {
             if(j + cnum <= len) {
-                var tempArr = skuKeyAttrs.slice(j, j+cnum);    //安装组合个数获得属性值·
+                var tempArr = skuKeyAttrs.slice(j, j+cnum);
+                tempData=sortKeys(tempArr);
+                    //安装组合个数获得属性值·
                 var genKey = key + ";" + tempArr.join(";");    //得到一个组合key
+                if (doLog) {
+                    log(genKey);
+                }
                 add2SKUResult(genKey, sku);
             }
         }
@@ -393,12 +431,20 @@ function initSKU() {
         var skuKeyAttrs = skuKey.split(";"); //SKU信息key属性值数组
         var len = skuKeyAttrs.length;
 
+        var doLog = false;
+        if (~skuKey.indexOf('20525:27772;1627207:28341;1630696:3266781;12304035:116177')) {
+            doLog = true
+        }
+
         //对每个SKU信息key属性值进行拆分组合
         for(j = 0; j < len; j++) {
             //单个属性值作为key直接放入SKUResult
             add2SKUResult(skuKeyAttrs[j], sku);
+            if (doLog) {
+                log(skuKeyAttrs[j]);
+            }
             //对本组SKU信息key属性进行组合，组合个数为j
-            (j > 0 && j < len-1) && combineSKU(skuKeyAttrs, j, sku);
+            (j > 0 && j < len) && combineSKU(skuKeyAttrs, j, sku, doLog);
         }
 
         //结果集接放入SKUResult
@@ -429,10 +475,12 @@ $(function() {
             var selectedIds = [];
             selectedObjs.each(function() {
                 selectedIds.push($(this).attr('data-value'));
-            });
+            });/*
             selectedIds.sort(function(value1, value2) {
                 return parseInt(value1) - parseInt(value2);
-            });
+            });*/
+            debugger;
+            selectedIds=sortKeys(selectedIds);
             var len = selectedIds.length;
             var prices = SKUResult[selectedIds.join(';')].prices;
             var maxPrice = Math.max.apply(Math, prices);
@@ -441,6 +489,9 @@ $(function() {
 
             //用已选中的节点验证待测试节点 underTestObjs
             $(".J_TAtom").not(selectedObjs).not(self).each(function() {
+                if ($(this)[0].innerHTML.indexOf('32')>-1){
+                    debugger;
+                }
                 var siblingsSelectedObj = $(this).siblings('.selected');
                 var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
                 if(siblingsSelectedObj.length) {
@@ -452,9 +503,10 @@ $(function() {
                     testAttrIds = selectedIds.concat();
                 }
                 testAttrIds = testAttrIds.concat($(this).attr('data-value'));
-                testAttrIds.sort(function(value1, value2) {
+                /*testAttrIds.sort(function(value1, value2) {
                     return parseInt(value1) - parseInt(value2);
-                });
+                });*/
+                testAttrIds=sortKeys(testAttrIds);
                 if(!SKUResult[testAttrIds.join(';')]) {
                     $(this).addClass('disabled').removeClass('selected');
                 } else {
