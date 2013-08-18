@@ -32,6 +32,7 @@ li {
     margin-right: 15px;
     outline: 2px #ccc solid;
     padding: 0 5px;
+    cursor: pointer;
 
 }
 
@@ -40,7 +41,8 @@ li.selected {
 }
 
 li.disabled {
-    outline: 2px solid darkgreen;
+    color: #CDCDCD;
+    outline: 2px dashed #D6D6D8;
 }
 
 ul {
