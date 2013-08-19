@@ -107,7 +107,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         var newSkuMap = {};
         for (var key in skuMap) {
             var newKey = key.replace(/^;|;$/gi, '');
-            newSkuMap[newKey] = newSkuMap[key];
+            newSkuMap[newKey] = skuMap[key];
         }
         return newSkuMap;
     }
@@ -129,7 +129,8 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         var config = S.merge(defConfig, cfg);
 
         var SELECTED_CLS = config.selectedClass,
-            DISABLED_CLS = config.disabledClass;
+            DISABLED_CLS = config.disabledClass,
+            SKU_CLS = config.skuClass;
 
 
         var skuMap = config.skuMap;
@@ -155,7 +156,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 //把组合的key放入结果集SKUResult
         function add2SKUResult(key, sku) {
-            if (SKUResult[key]) {//SKU信息key属性·
+            if (SKUResult[key]) { //SKU信息key属性·
                 SKUResult[key].count += sku.count;
                 SKUResult[key].prices.push(sku.price);
             } else {
@@ -185,36 +186,17 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
         }
 
-//对一条SKU信息进行拆分组合
-        function combineSKU(skuKeyAttrs, cnum, sku) {
-            var len = skuKeyAttrs.length;
-            for (var i = 0; i < len; i++) {
-                var key = skuKeyAttrs[i];
-                for (var j = i + 1; j < len; j++) {
-                    if (j + cnum <= len) {
-                        var tempArr = skuKeyAttrs.slice(j, j + cnum);
-                        tempArr = sortKeys(tempArr);
-                        //安装组合个数获得属性值·
-                        var genKey = key + ";" + tempArr.join(";");    //得到一个组合key
 
-                        add2SKUResult(genKey, sku);
-                    }
-                }
-            }
-        }
-
-//初始化得到结果集
+        //初始化得到结果集
         function initSKU() {
-            var i, j, skuKeys = getObjKeys(skuMap);
-            for (i = 0; i < skuKeys.length; i++) {
-                var skuKey = skuKeys[i];//一条SKU信息key
-                var sku = skuMap[skuKey];    //一条SKU信息value
-                var skuKeyAttrs = skuKey.split(";"); //SKU信息key属性值数组
+            var i, keys = getObjKeys(skuMap);
+            for (i = 0; i < keys.length; i++) {
+                var key = keys[i];//一条SKU信息key
+                var sku = skuMap[key];    //一条SKU信息value
+                var skuKeyAttrs = key.split(";"); //SKU信息key属性值数组
                 var len = skuKeyAttrs.length;
 
-
                 var combs = combinations(skuKeyAttrs);
-
 
                 var j = 0;
                 for (; j < len; j++) {
@@ -222,12 +204,12 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                 }
 
                 for (; j < combs.length - 1; j++) {
-                    var genKey = sortKeys(combs[j]).join(';');
-                    add2SKUResult(genKey, sku);
+                    var tempKey = sortKeys(combs[j]).join(';');
+                    add2SKUResult(tempKey, sku);
                 }
 
                 //结果集接放入SKUResult
-                SKUResult[skuKey] = {
+                SKUResult[key] = {
                     count:  sku.count,
                     prices: [sku.price]
                 }
@@ -237,7 +219,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 //初始化用户选择事件
         $(function () {
             initSKU();
-            $('.J_TSKU').each(function () {
+            $('.' + SKU_CLS).each(function () {
                 var self = $(this);
                 var attr_id = self.attr('data-value');
                 if (!SKUResult[attr_id]) {
@@ -253,7 +235,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                          // 切换被点击SKU 的class，去除其所在属性其它的sku 的 class
                          self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-                         var selectedObjs = $('.selected');
+                         var selectedObjs = $('.' + SELECTED_CLS);
                          if (selectedObjs.length) {
                              //获得组合key价格
                              var selectedIds = [];
@@ -272,8 +254,8 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                              $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
                              //用已选中的节点验证待测试节点 underTestObjs
-                             $(".J_TSKU").not(selectedObjs).not(self).each(function () {
-                                 var siblingsSelectedObj = $(this).siblings('.selected');
+                             $("." + SKU_CLS).not(selectedObjs).not(self).each(function () {
+                                 var siblingsSelectedObj = $(this).siblings('.' + SELECTED_CLS);
                                  var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
                                  if (siblingsSelectedObj.length) {
                                      var siblingsSelectedObjId = siblingsSelectedObj.attr('data-value');
@@ -284,9 +266,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                                      testAttrIds = selectedIds.concat();
                                  }
                                  testAttrIds = testAttrIds.concat($(this).attr('data-value'));
-                                 /*testAttrIds.sort(function(value1, value2) {
-                                  return parseInt(value1) - parseInt(value2);
-                                  });*/
                                  testAttrIds = sortKeys(testAttrIds);
                                  if (!SKUResult[testAttrIds.join(';')]) {
                                      $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
@@ -298,7 +277,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                              //设置默认价格
                              $('#price').text('--');
                              //设置属性状态
-                             $('.J_TSKU').each(function () {
+                             $('.' + SKU_CLS).each(function () {
                                  SKUResult[$(this).attr('data-value')] ? $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                              })
                          }
