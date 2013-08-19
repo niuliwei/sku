@@ -140,21 +140,24 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
     function SKU(cfg) {
+
         if (!cfg) {
             S.log('SKU: 配置为空，无法初始化');
             return;
         }
 
-        var config = S.merge(defConfig, cfg);
+        var self = this;
 
-        var SELECTED_CLS = config.selectedClass,
-            DISABLED_CLS = config.disabledClass,
-            SKU_CLS = config.skuClass,
-            ATTR_NAME = config.attrName;
+        self.config = S.merge(defConfig, cfg);
+
+        var SELECTED_CLS = self.config.selectedClass,
+            DISABLED_CLS = self.config.disabledClass,
+            SKU_CLS = self.config.skuClass,
+            ATTR_NAME = self.config.attrName;
 
 
-        var skuMap = config.skuMap,
-            serializedSkuMap = config.serializedSkuMap;
+        var skuMap = self.config.skuMap,
+            serializedSkuMap = self.config.serializedSkuMap;
 
         if (!skuMap) {
             return S.log('SKU: skuMap 为空，无法初始化');
