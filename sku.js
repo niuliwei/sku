@@ -166,57 +166,67 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
         skuMap = normalizeSkuMap(skuMap);
 
-
         serializeSkuMap(skuMap, serializedSkuMap);
-        $('.' + SKU_CLS).click(function () {
-                     var self = $(this);
 
-                     if ($(this).hasClass(DISABLED_CLS)) {
-                         return;
-                     }
+        S.all('.' + SKU_CLS).on('click', function (evt) {
 
-                     self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
+            var self = S.one(evt.currentTarget);
 
-                     var selectedObjs = $('.' + SELECTED_CLS);
-                     if (selectedObjs.length) {
-                         var selectedIds = [];
-                         selectedObjs.each(function () {
-                             selectedIds.push($(this).attr(ATTR_NAME));
-                         });
+            if (self.hasClass(DISABLED_CLS)) {
+                return;
+            }
 
-                         selectedIds = sortKeys(selectedIds);
-                         var len = selectedIds.length;
-                         var prices = serializedSkuMap[selectedIds.join(';')].prices;
-                         var maxPrice = Math.max.apply(Math, prices);
-                         var minPrice = Math.min.apply(Math, prices);
-                         $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
+            self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-                         $("." + SKU_CLS).not(selectedObjs).not(self).each(function () {
-                             var siblingsSelectedObj = $(this).siblings('.' + SELECTED_CLS);
-                             var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
-                             if (siblingsSelectedObj.length) {
-                                 var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
-                                 for (var i = 0; i < len; i++) {
-                                     (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
-                                 }
-                             } else {
-                                 testAttrIds = selectedIds.concat();
-                             }
-                             testAttrIds = testAttrIds.concat($(this).attr(ATTR_NAME));
-                             testAttrIds = sortKeys(testAttrIds);
-                             if (!serializedSkuMap[testAttrIds.join(';')]) {
-                                 $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
-                             } else {
-                                 $(this).removeClass(DISABLED_CLS);
-                             }
-                         });
-                     } else {
-                         $('.' + SKU_CLS).each(function () {
-                             serializedSkuMap[$(this).attr(ATTR_NAME)] ?
-                             $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
-                         })
-                     }
-                 });
+            var selectedObjs = S.all('.' + SELECTED_CLS);
+
+            if (selectedObjs.length) {
+                var selectedIds = [];
+                selectedObjs.each(function (el) {
+                    selectedIds.push(el.attr(ATTR_NAME));
+                });
+
+                selectedIds = sortKeys(selectedIds);
+                var len = selectedIds.length;
+                var prices = serializedSkuMap[selectedIds.join(';')].prices;
+                var maxPrice = Math.max.apply(Math, prices);
+                var minPrice = Math.min.apply(Math, prices);
+
+                // $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
+
+                S.all("." + SKU_CLS).each(function (el) {
+
+                    if (S.inArray(el[0], selectedObjs) || el[0] === self[0]) {
+                        return;
+                    }
+
+                    var siblingsSelectedObj = el.siblings('.' + SELECTED_CLS),
+                        testAttrIds = [];
+
+                    if (siblingsSelectedObj.length) {
+                        var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
+                        for (var i = 0; i < len; i++) {
+                            (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
+                        }
+                    } else {
+                        testAttrIds = selectedIds.concat();
+                    }
+                    testAttrIds = testAttrIds.concat(el.attr(ATTR_NAME));
+                    testAttrIds = sortKeys(testAttrIds);
+                    if (!serializedSkuMap[testAttrIds.join(';')]) {
+                        el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                    } else {
+                        el.removeClass(DISABLED_CLS);
+                    }
+                });
+            } else {
+                S.all('.' + SKU_CLS).each(function (el) {
+                    el = S.one(el);
+                    serializedSkuMap[el.attr(ATTR_NAME)] ?
+                    el.removeClass(DISABLED_CLS) : $el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                })
+            }
+        });
 
 
     }
