@@ -130,7 +130,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
     var defConfig = {
-        _required:         ['root', 'skuMap'],
+        _required:        ['root', 'skuMap'],
         root:             null,
         skuClass:         'J_TSKU',
         selectedClass:    'selected',
@@ -153,14 +153,14 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         self.config = S.merge(defConfig, cfg);
 
 
-        S.each(self.config._required, function(req){
-            if (!self.config.req) {
+        S.each(self.config._required, function (req) {
+            if (!self.config[req]) {
                 throw 'SKU：缺少配置项 ' + req;
             }
         })
 
-
-        var SELECTED_CLS = self.config.selectedClass,
+        var ROOT = self.config.root,
+            SELECTED_CLS = self.config.selectedClass,
             DISABLED_CLS = self.config.disabledClass,
             SKU_CLS = self.config.skuClass,
             ATTR_NAME = self.config.attrName;
@@ -170,13 +170,11 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             serializedSkuMap = self.config.serializedSkuMap;
 
 
-
-
         skuMap = normalizeSkuMap(skuMap);
 
         serializeSkuMap(skuMap, serializedSkuMap);
 
-        S.all('.' + SKU_CLS).on('click', function (evt) {
+        S.all('.' + SKU_CLS, ROOT).on('click', function (evt) {
 
             var self = S.one(evt.currentTarget);
 
@@ -186,7 +184,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
             self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-            var selectedObjs = S.all('.' + SELECTED_CLS);
+            var selectedObjs = S.all('.' + SELECTED_CLS, ROOT);
 
             if (selectedObjs.length) {
                 var selectedIds = [];
@@ -202,7 +200,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
                 // $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
-                S.all("." + SKU_CLS).each(function (el) {
+                S.all("." + SKU_CLS, ROOT).each(function (el) {
 
                     if (S.inArray(el[0], selectedObjs) || el[0] === self[0]) {
                         return;
@@ -228,7 +226,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                     }
                 });
             } else {
-                S.all('.' + SKU_CLS).each(function (el) {
+                S.all('.' + SKU_CLS, ROOT).each(function (el) {
                     el = S.one(el);
                     serializedSkuMap[el.attr(ATTR_NAME)] ?
                     el.removeClass(DISABLED_CLS) : $el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
