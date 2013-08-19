@@ -82,7 +82,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             }
 
             serializedSkuMap[key] = {
-                count:  sku.count,
+                stock:  sku.stock,
                 prices: [sku.price]
             }
         }
@@ -105,17 +105,18 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
     function putResult(key, sku, serializedSkuMap) {
         if (serializedSkuMap[key]) {
-            serializedSkuMap[key].count += sku.count;
+            serializedSkuMap[key].stock += parseInt(sku.stock);
             serializedSkuMap[key].prices.push(sku.price);
         } else {
             serializedSkuMap[key] = {
-                count:  sku.count,
+                stock:  parseInt(sku.stock),
                 prices: [sku.price]
             };
         }
     }
 
     function sortKeys(keys) {
+
         var holder = {},
             i, key, newKey;
 
@@ -125,9 +126,11 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             holder[newKey] = key;
             keys[i] = newKey;
         }
+
         keys.sort(function (a, b) {
             return parseInt(a) - parseInt(b);
-        })
+        });
+
         for (i = 0; i < keys.length; i++) {
             keys[i] = holder[keys[i]];
         }
@@ -160,18 +163,15 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
         self.config = S.merge(defConfig, cfg);
 
-
         S.each(self.config._required, function (req) {
             if (!self.config[req]) {
                 throw 'SKU：缺少配置项 ' + req;
             }
         });
 
-
         var skuMap = self.config.skuMap,
             serializedSkuMap = self.config.serializedSkuMap;
         skuMap = normalizeSkuMap(skuMap);
-
 
         self.length = getKeyLength(skuMap); // SKU 实例的长度
 
@@ -182,7 +182,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             DISABLED_CLS = self.config.disabledClass,
             SKU_CLS = self.config.skuClass,
             ATTR_NAME = self.config.attrName;
-
 
         serializeSkuMap(skuMap, serializedSkuMap, self);
 
