@@ -1,14 +1,129 @@
 KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
+    /**
+     * K-combinations
+     *
+     * Get k-sized combinations of elements in a set.
+     *
+     * Usage:
+     *   k_combinations(set, k)
+     *
+     * Parameters:
+     *   set: Array of objects of any type. They are treated as unique.
+     *   k: size of combinations to search for.
+     *
+     * Return:
+     *   Array of found combinations, size of a combination is k.
+     *
+     * Examples:
+     *
+     *   k_combinations([1, 2, 3], 1)
+     *   -> [[1], [2], [3]]
+     *
+     *   k_combinations([1, 2, 3], 2)
+     *   -> [[1,2], [1,3], [2, 3]
+     *
+     *   k_combinations([1, 2, 3], 3)
+     *   -> [[1, 2, 3]]
+     *
+     *   k_combinations([1, 2, 3], 4)
+     *   -> []
+     *
+     *   k_combinations([1, 2, 3], 0)
+     *   -> []
+     *
+     *   k_combinations([1, 2, 3], -1)
+     *   -> []
+     *
+     *   k_combinations([], 0)
+     *   -> []
+     */
+    function k_combinations(set, k) {
+        var i, j, combs, head, tailcombs;
 
-    function SKU(config) {
-        if (!config) {
+        if (k > set.length || k <= 0) {
+            return [];
+        }
+
+        if (k == set.length) {
+            return [set];
+        }
+
+        if (k == 1) {
+            combs = [];
+            for (i = 0; i < set.length; i++) {
+                combs.push([set[i]]);
+            }
+            return combs;
+        }
+
+        // Assert {1 < k < set.length}
+
+        combs = [];
+        for (i = 0; i < set.length - k + 1; i++) {
+            head = set.slice(i, i + 1);
+            tailcombs = k_combinations(set.slice(i + 1), k - 1);
+            for (j = 0; j < tailcombs.length; j++) {
+                combs.push(head.concat(tailcombs[j]));
+            }
+        }
+        return combs;
+    }
+
+
+    /**
+     * Combinations
+     *
+     * Get all possible combinations of elements in a set.
+     *
+     * Usage:
+     *   combinations(set)
+     *
+     * Examples:
+     *
+     *   combinations([1, 2, 3])
+     *   -> [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
+     *
+     *   combinations([1])
+     *   -> [[1]]
+     */
+    function combinations(set) {
+        var k, i, combs, k_combs;
+        combs = [];
+
+        // Calculate all non-empty k-combinations
+        for (k = 1; k <= set.length; k++) {
+            k_combs = k_combinations(set, k);
+            for (i = 0; i < k_combs.length; i++) {
+                combs.push(k_combs[i]);
+            }
+        }
+        return combs;
+    }
+
+
+    var defConfig = {
+        skuClass:      'J_TSKU', //
+        selectedClass: 'selected',
+        disabledClass: 'disabled'
+    };
+
+
+    function SKU(cfg) {
+        if (!cfg) {
             S.log('SKU 组件：配置为空，无法初始化');
             return;
         }
 
+        var config = S.merge(defConfig, cfg);
+
+        var SELECTED_CLS = config.selectedClass,
+            DISABLED_CLS = config.disabledClass;
+
+
         var skuMap = config.skuMap;
+        debugger;
 
 
 //测试结果集
@@ -20,70 +135,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         skuMap = tempData;
 //保存最后的组合结果信息
         var SKUResult = {};
-
-
-        function k_combinations(set, k) {
-            var i, j, combs, head, tailcombs;
-
-            if (k > set.length || k <= 0) {
-                return [];
-            }
-
-            if (k == set.length) {
-                return [set];
-            }
-
-            if (k == 1) {
-                combs = [];
-                for (i = 0; i < set.length; i++) {
-                    combs.push([set[i]]);
-                }
-                return combs;
-            }
-
-            // Assert {1 < k < set.length}
-
-            combs = [];
-            for (i = 0; i < set.length - k + 1; i++) {
-                head = set.slice(i, i + 1);
-                tailcombs = k_combinations(set.slice(i + 1), k - 1);
-                for (j = 0; j < tailcombs.length; j++) {
-                    combs.push(head.concat(tailcombs[j]));
-                }
-            }
-            return combs;
-        }
-
-
-        /**
-         * Combinations
-         *
-         * Get all possible combinations of elements in a set.
-         *
-         * Usage:
-         *   combinations(set)
-         *
-         * Examples:
-         *
-         *   combinations([1, 2, 3])
-         *   -> [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
-         *
-         *   combinations([1])
-         *   -> [[1]]
-         */
-        function combinations(set) {
-            var k, i, combs, k_combs;
-            combs = [];
-
-            // Calculate all non-empty k-combinations
-            for (k = 1; k <= set.length; k++) {
-                k_combs = k_combinations(set, k);
-                for (i = 0; i < k_combs.length; i++) {
-                    combs.push(k_combs[i]);
-                }
-            }
-            return combs;
-        }
 
 
 //获得对象的key
@@ -110,8 +161,8 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             }
         }
 
+        // Sort keys in
         function sortKeys(arr) {
-            // []
             var holder = {}
             for (var i = 0; i < arr.length; i++) {
                 var key = arr[i], newKey = key.replace(';');
@@ -181,21 +232,21 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 //初始化用户选择事件
         $(function () {
             initSKU();
-            $('.J_TAtom').each(function () {
+            $('.J_TSKU').each(function () {
                 var self = $(this);
                 var attr_id = self.attr('data-value');
                 if (!SKUResult[attr_id]) {
-                    self.attr('disabled', 'disabled');
+                    self.attr(DISABLED_CLS, DISABLED_CLS);
                 }
             }).click(function () {
                          var self = $(this);
 
-                         if ($(this).hasClass('disabled')) {
+                         if ($(this).hasClass(DISABLED_CLS)) {
                              return;
                          }
 
                          // 切换被点击SKU 的class，去除其所在属性其它的sku 的 class
-                         self.toggleClass('selected').siblings().removeClass('selected');
+                         self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
                          var selectedObjs = $('.selected');
                          if (selectedObjs.length) {
@@ -216,7 +267,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                              $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
                              //用已选中的节点验证待测试节点 underTestObjs
-                             $(".J_TAtom").not(selectedObjs).not(self).each(function () {
+                             $(".J_TSKU").not(selectedObjs).not(self).each(function () {
                                  var siblingsSelectedObj = $(this).siblings('.selected');
                                  var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
                                  if (siblingsSelectedObj.length) {
@@ -233,17 +284,17 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                                   });*/
                                  testAttrIds = sortKeys(testAttrIds);
                                  if (!SKUResult[testAttrIds.join(';')]) {
-                                     $(this).addClass('disabled').removeClass('selected');
+                                     $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                                  } else {
-                                     $(this).removeClass('disabled');
+                                     $(this).removeClass(DISABLED_CLS);
                                  }
                              });
                          } else {
                              //设置默认价格
                              $('#price').text('--');
                              //设置属性状态
-                             $('.J_TAtom').each(function () {
-                                 SKUResult[$(this).attr('data-value')] ? $(this).removeClass('disabled') : $(this).addClass('disabled').removeClass('selected');
+                             $('.J_TSKU').each(function () {
+                                 SKUResult[$(this).attr('data-value')] ? $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                              })
                          }
                      });

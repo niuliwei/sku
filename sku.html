@@ -104,7 +104,7 @@
 
     S.use('sku', function (S, SKU) {
         var config = {
-            skuMap:    {
+            skuMap:        {
                 ";20525:9507519;1627207:30156;1630696:6536025;12304035:116177;":   {
                     "skuId":    "30171814678",
                     "oversold": "true",
@@ -354,7 +354,10 @@
                     "stock":    "268"
                 }
             },
-            container: "#container"
+            container:     "#container",
+            skuClass:      'J_TSKU',
+            selectedClass: 'selected',
+            disabledClass: 'disabled'
         };
 
         var sku = new SKU(config);
