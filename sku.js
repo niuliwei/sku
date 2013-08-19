@@ -169,13 +169,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 //初始化用户选择事件
         serializeSkuMap(skuMap, serializedSkuMap);
-        $('.' + SKU_CLS).each(function () {
-            var self = $(this);
-            var attr_id = self.attr(ATTR_NAME);
-            if (!serializedSkuMap[attr_id]) {
-                self.attr(DISABLED_CLS, DISABLED_CLS);
-            }
-        }).click(function () {
+        $('.' + SKU_CLS).click(function () {
                      var self = $(this);
 
                      if ($(this).hasClass(DISABLED_CLS)) {
