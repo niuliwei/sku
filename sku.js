@@ -159,6 +159,9 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             }
         })
 
+
+        self.uid = S.guid();
+
         var ROOT = self.config.root,
             SELECTED_CLS = self.config.selectedClass,
             DISABLED_CLS = self.config.disabledClass,
@@ -176,13 +179,13 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
         S.all('.' + SKU_CLS, ROOT).on('click', function (evt) {
 
-            var self = S.one(evt.currentTarget);
+            var target = S.one(evt.currentTarget);
 
-            if (self.hasClass(DISABLED_CLS)) {
+            if (target.hasClass(DISABLED_CLS)) {
                 return;
             }
 
-            self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
+            target.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
             var selectedObjs = S.all('.' + SELECTED_CLS, ROOT);
 
@@ -202,7 +205,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
                 S.all("." + SKU_CLS, ROOT).each(function (el) {
 
-                    if (S.inArray(el[0], selectedObjs) || el[0] === self[0]) {
+                    if (S.inArray(el[0], selectedObjs) || el[0] === target[0]) {
                         return;
                     }
 
@@ -238,9 +241,17 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     }
 
     S.augment(SKU, {
+        station: S.mix({}, S.EventTarget),
+
+        broadcast: function (data) {
+            data = S.merge(data, { id: self.uid})
+            this.station.fire(data);
+        },
+
         destroy: function () {
             S.log('destroyed');
         }
+
     });
 
     return SKU;
