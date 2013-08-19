@@ -1,22 +1,27 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-
-    <title>SKU Wrapper Demo</title>
-
-    <link rel="stylesheet" href="sku.css"/>
+    <title>Demo</title>
+    <style type="text/css">
+        .selected {
+            color: red;
+        }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
-    <script type="text/javascript" src="sku.js"></script>
+    <link rel="stylesheet" href="sku.css"/>
 </head>
 <body>
+
+
 <div class="tb-skin  tb-naked ">
     <dl class="tb-prop J_Prop tb-clearfix">
         <dt class="tb-property-type">版本：</dt>
         <dd>
             <ul data-property="版本" class="tb-clearfix J_TSaleProp  ">
-                <li data-value="20525:27772"><a href="#"><span>中国大陆</span></a></li>
-                <li data-value="20525:9507519"><a href="#"><span>港澳台</span></a></li>
-                <li data-value="20525:29148"><a href="#"><span>欧洲</span></a></li>
+                <li data-value="20525:27772" class="J_TSKU">中国大陆</li>
+                <li data-value="20525:9507519" class="J_TSKU">港澳台</li>
+                <li data-value="20525:29148" class="J_TSKU">欧洲</li>
             </ul>
         </dd>
     </dl>
@@ -24,46 +29,46 @@
         <dt class="tb-property-type">机身颜色：</dt>
         <dd>
             <ul data-property="机身颜色" class="tb-clearfix J_TSaleProp tb-img  ">
-                <li data-value="1627207:60092" title="浅黄色" class="tb-txt">
-                    <a href="#">
-                        <span>浅黄色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:28341" title="黑色" class="tb-txt">
-                    <a href="#">
-                        <span>黑色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:28338" title="蓝色" class="tb-txt">
-                    <a href="#">
-                        <span>蓝色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:28332" title="浅灰色" class="tb-txt">
-                    <a href="#">
-                        <span>浅灰色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:28324" title="黄色" class="tb-txt">
-                    <a href="#">
-                        <span>黄色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:28320" title="白色" class="tb-txt">
-                    <a href="#">
-                        <span>白色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:30156" title="浅绿色" class="tb-txt">
-                    <a href="#">
-                        <span>浅绿色</span>
-                    </a>
-                    </li>
-                <li data-value="1627207:3229299" title="红" class="tb-txt">
-                    <a href="#">
-                        <span>红</span>
-                    </a>
-                    </li>
+                <li data-value="1627207:60092" class="J_TSKU" title="浅黄色">
+
+                    浅黄色
+
+                </li>
+                <li data-value="1627207:28341" class="J_TSKU" title="黑色">
+
+                    黑色
+
+                </li>
+                <li data-value="1627207:28338" class="J_TSKU" title="蓝色">
+
+                    蓝色
+
+                </li>
+                <li data-value="1627207:28332" class="J_TSKU" title="浅灰色">
+
+                    浅灰色
+
+                </li>
+                <li data-value="1627207:28324" class="J_TSKU" title="黄色">
+
+                    黄色
+
+                </li>
+                <li data-value="1627207:28320" class="J_TSKU" title="白色">
+
+                    白色
+
+                </li>
+                <li data-value="1627207:30156" class="J_TSKU" title="浅绿色">
+
+                    浅绿色
+
+                </li>
+                <li data-value="1627207:3229299" class="J_TSKU" title="红">
+
+                    红
+
+                </li>
             </ul>
         </dd>
     </dl>
@@ -71,9 +76,9 @@
         <dt class="tb-property-type">手机套餐：</dt>
         <dd>
             <ul data-property="手机套餐" class="tb-clearfix J_TSaleProp  ">
-                <li data-value="1630696:6536025"><a href="#"><span>官方标配</span></a></li>
-                <li data-value="1630696:3266781"><a href="#"><span>套餐二</span></a></li>
-                <li data-value="1630696:3266785"><a href="#"><span>套餐三</span></a></li>
+                <li data-value="1630696:6536025" class="J_TSKU">官方标配</li>
+                <li data-value="1630696:3266781" class="J_TSKU">套餐二</li>
+                <li data-value="1630696:3266785" class="J_TSKU">套餐三</li>
             </ul>
         </dd>
     </dl>
@@ -81,14 +86,20 @@
         <dt class="tb-property-type">机身内存：</dt>
         <dd>
             <ul data-property="机身内存" class="tb-clearfix J_TSaleProp  ">
-                <li data-value="12304035:116177"><a href="#"><span>32G</span></a></li>
+                <li data-value="12304035:116177" class="J_TSKU">32G</li>
             </ul>
         </dd>
     </dl>
 
 </div>
 
-<script>
+
+<span id="price">--</span>
+
+<script type="text/javascript" src="sku.js">
+</script>
+
+<script type="text/javascript">
 (function (S) {
 
 
@@ -101,9 +112,11 @@
                  ]
              });
 
-
     S.use('sku', function (S, SKU) {
         var config = {
+            skuClass:      'J_TSKU', //
+            selectedClass: 'selected',
+            disabledClass: 'disabled',
             skuMap:        {
                 ";20525:9507519;1627207:30156;1630696:6536025;12304035:116177;":   {
                     "skuId":    "30171814678",
@@ -353,23 +366,13 @@
                     "price":    "3005.00",
                     "stock":    "268"
                 }
-            },
-            container:     "#container",
-            skuClass:      'J_TSKU',
-            selectedClass: 'selected',
-            disabledClass: 'disabled'
-        };
+            }
+        }
 
-        var sku = new SKU(config);
-        sku.destroy();
-
+        new SKU(config);
     });
 
-
 })(KISSY);
-
-
 </script>
-
 </body>
 </html>
