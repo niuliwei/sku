@@ -167,7 +167,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         skuMap = normalizeSkuMap(skuMap);
 
 
-//初始化用户选择事件
         serializeSkuMap(skuMap, serializedSkuMap);
         $('.' + SKU_CLS).click(function () {
                      var self = $(this);
@@ -184,10 +183,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                          selectedObjs.each(function () {
                              selectedIds.push($(this).attr(ATTR_NAME));
                          });
-                         /*
-                          selectedIds.sort(function(value1, value2) {
-                          return parseInt(value1) - parseInt(value2);
-                          });*/
+
                          selectedIds = sortKeys(selectedIds);
                          var len = selectedIds.length;
                          var prices = serializedSkuMap[selectedIds.join(';')].prices;
@@ -195,7 +191,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                          var minPrice = Math.min.apply(Math, prices);
                          $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
-                         //用已选中的节点验证待测试节点 underTestObjs
                          $("." + SKU_CLS).not(selectedObjs).not(self).each(function () {
                              var siblingsSelectedObj = $(this).siblings('.' + SELECTED_CLS);
                              var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
