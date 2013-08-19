@@ -168,68 +168,66 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
 //初始化用户选择事件
-        $(function () {
-            serializeSkuMap(skuMap, serializedSkuMap);
-            $('.' + SKU_CLS).each(function () {
-                var self = $(this);
-                var attr_id = self.attr(ATTR_NAME);
-                if (!serializedSkuMap[attr_id]) {
-                    self.attr(DISABLED_CLS, DISABLED_CLS);
-                }
-            }).click(function () {
-                         var self = $(this);
+        serializeSkuMap(skuMap, serializedSkuMap);
+        $('.' + SKU_CLS).each(function () {
+            var self = $(this);
+            var attr_id = self.attr(ATTR_NAME);
+            if (!serializedSkuMap[attr_id]) {
+                self.attr(DISABLED_CLS, DISABLED_CLS);
+            }
+        }).click(function () {
+                     var self = $(this);
 
-                         if ($(this).hasClass(DISABLED_CLS)) {
-                             return;
-                         }
+                     if ($(this).hasClass(DISABLED_CLS)) {
+                         return;
+                     }
 
-                         self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
+                     self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-                         var selectedObjs = $('.' + SELECTED_CLS);
-                         if (selectedObjs.length) {
-                             var selectedIds = [];
-                             selectedObjs.each(function () {
-                                 selectedIds.push($(this).attr(ATTR_NAME));
-                             });
-                             /*
-                              selectedIds.sort(function(value1, value2) {
-                              return parseInt(value1) - parseInt(value2);
-                              });*/
-                             selectedIds = sortKeys(selectedIds);
-                             var len = selectedIds.length;
-                             var prices = serializedSkuMap[selectedIds.join(';')].prices;
-                             var maxPrice = Math.max.apply(Math, prices);
-                             var minPrice = Math.min.apply(Math, prices);
-                             $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
+                     var selectedObjs = $('.' + SELECTED_CLS);
+                     if (selectedObjs.length) {
+                         var selectedIds = [];
+                         selectedObjs.each(function () {
+                             selectedIds.push($(this).attr(ATTR_NAME));
+                         });
+                         /*
+                          selectedIds.sort(function(value1, value2) {
+                          return parseInt(value1) - parseInt(value2);
+                          });*/
+                         selectedIds = sortKeys(selectedIds);
+                         var len = selectedIds.length;
+                         var prices = serializedSkuMap[selectedIds.join(';')].prices;
+                         var maxPrice = Math.max.apply(Math, prices);
+                         var minPrice = Math.min.apply(Math, prices);
+                         $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
-                             //用已选中的节点验证待测试节点 underTestObjs
-                             $("." + SKU_CLS).not(selectedObjs).not(self).each(function () {
-                                 var siblingsSelectedObj = $(this).siblings('.' + SELECTED_CLS);
-                                 var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
-                                 if (siblingsSelectedObj.length) {
-                                     var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
-                                     for (var i = 0; i < len; i++) {
-                                         (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
-                                     }
-                                 } else {
-                                     testAttrIds = selectedIds.concat();
+                         //用已选中的节点验证待测试节点 underTestObjs
+                         $("." + SKU_CLS).not(selectedObjs).not(self).each(function () {
+                             var siblingsSelectedObj = $(this).siblings('.' + SELECTED_CLS);
+                             var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
+                             if (siblingsSelectedObj.length) {
+                                 var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
+                                 for (var i = 0; i < len; i++) {
+                                     (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
                                  }
-                                 testAttrIds = testAttrIds.concat($(this).attr(ATTR_NAME));
-                                 testAttrIds = sortKeys(testAttrIds);
-                                 if (!serializedSkuMap[testAttrIds.join(';')]) {
-                                     $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
-                                 } else {
-                                     $(this).removeClass(DISABLED_CLS);
-                                 }
-                             });
-                         } else {
-                             $('.' + SKU_CLS).each(function () {
-                                 serializedSkuMap[$(this).attr(ATTR_NAME)] ?
-                                 $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
-                             })
-                         }
-                     });
-        });
+                             } else {
+                                 testAttrIds = selectedIds.concat();
+                             }
+                             testAttrIds = testAttrIds.concat($(this).attr(ATTR_NAME));
+                             testAttrIds = sortKeys(testAttrIds);
+                             if (!serializedSkuMap[testAttrIds.join(';')]) {
+                                 $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                             } else {
+                                 $(this).removeClass(DISABLED_CLS);
+                             }
+                         });
+                     } else {
+                         $('.' + SKU_CLS).each(function () {
+                             serializedSkuMap[$(this).attr(ATTR_NAME)] ?
+                             $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                         })
+                     }
+                 });
 
 
     }
