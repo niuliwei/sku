@@ -57,18 +57,22 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         return newSkuMap;
     }
 
-    function serializeSkuMap(skuMap, serializedSkuMap) {
-        var i, keys = getKeys(skuMap);
+    function serializeSkuMap(skuMap, serializedSkuMap, self) {
+        
+        var i, j,
+            keys = getKeys(skuMap),
+            skuLength = self.length;
+
         for (i = 0; i < keys.length; i++) {
             var key = keys[i];//一条SKU信息key
             var sku = skuMap[key];    //一条SKU信息value
             var skuKeyAttrs = key.split(";"); //SKU信息key属性值数组
-            var len = skuKeyAttrs.length;
 
             var combs = combinations(skuKeyAttrs);
 
-            var j = 0;
-            for (; j < len; j++) {
+            j = 0;
+
+            for (; j < skuLength; j++) {
                 putResult(skuKeyAttrs[j], sku, serializedSkuMap);
             }
 
@@ -84,7 +88,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         }
     }
 
-    //获得对象的key
     function getKeys(obj) {
         var keys = [];
         for (var key in obj) {
@@ -94,7 +97,12 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         return keys;
     }
 
-//把组合的key放入结果集SKUResult
+    function getKeyLength (skuMap){
+        for (var key in skuMap) {
+            return key.split(';').length;
+        }
+    };
+
     function putResult(key, sku, serializedSkuMap) {
         if (serializedSkuMap[key]) {
             serializedSkuMap[key].count += sku.count;
@@ -157,8 +165,15 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             if (!self.config[req]) {
                 throw 'SKU：缺少配置项 ' + req;
             }
-        })
+        });
 
+
+        var skuMap = self.config.skuMap,
+            serializedSkuMap = self.config.serializedSkuMap;
+        skuMap = normalizeSkuMap(skuMap);
+
+
+        self.length = getKeyLength(skuMap); // SKU 实例的长度
 
         self.uid = S.guid();
 
@@ -169,13 +184,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             ATTR_NAME = self.config.attrName;
 
 
-        var skuMap = self.config.skuMap,
-            serializedSkuMap = self.config.serializedSkuMap;
-
-
-        skuMap = normalizeSkuMap(skuMap);
-
-        serializeSkuMap(skuMap, serializedSkuMap);
+        serializeSkuMap(skuMap, serializedSkuMap, self);
 
         S.all('.' + SKU_CLS, ROOT).on('click', function (evt) {
 
