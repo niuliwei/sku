@@ -114,15 +114,17 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
     var defConfig = {
-        skuClass:      'J_TSKU',
-        selectedClass: 'selected',
-        disabledClass: 'disabled'
+        skuClass:         'J_TSKU',
+        selectedClass:    'selected',
+        disabledClass:    'disabled',
+        skuMap:           null,
+        serializedSkuMap: {}
     };
 
 
     function SKU(cfg) {
         if (!cfg) {
-            S.log('SKU 组件：配置为空，无法初始化');
+            S.log('SKU: 配置为空，无法初始化');
             return;
         }
 
@@ -133,34 +135,34 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             SKU_CLS = config.skuClass;
 
 
-        var skuMap = config.skuMap;
+        var skuMap = config.skuMap,
+            serializedSkuMap = config.serializedSkuMap;
 
+        if (!skuMap) {
+            return S.log('SKU: skuMap 为空，无法初始化');
+        }
 
-//测试结果集
 
         skuMap = normalizeSkuMap(skuMap);
-//保存最后的组合结果信息
-        var SKUResult = {};
 
 
 //获得对象的key
-        function getObjKeys(obj) {
-            if (obj !== Object(obj)) throw new TypeError('Invalid object');
+        function getKeys(obj) {
             var keys = [];
             for (var key in obj) {
                 if (Object.prototype.hasOwnProperty.call(obj, key))
-                    keys[keys.length] = key;
+                    keys.push(key);
             }
             return keys;
         }
 
 //把组合的key放入结果集SKUResult
         function add2SKUResult(key, sku) {
-            if (SKUResult[key]) { //SKU信息key属性·
-                SKUResult[key].count += sku.count;
-                SKUResult[key].prices.push(sku.price);
+            if (serializedSkuMap[key]) {
+                serializedSkuMap[key].count += sku.count;
+                serializedSkuMap[key].prices.push(sku.price);
             } else {
-                SKUResult[key] = {
+                serializedSkuMap[key] = {
                     count:  sku.count,
                     prices: [sku.price]
                 };
@@ -168,28 +170,32 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         }
 
         // Sort keys in
-        function sortKeys(arr) {
-            var holder = {}
-            for (var i = 0; i < arr.length; i++) {
-                var key = arr[i], newKey = key.replace(';');
+        function sortKeys(keys) {
+
+            var holder = {},
+                i, key, newKey;
+
+            for (i = 0; i < keys.length; i++) {
+                key = keys[i];
+                newKey = key.replace(';');
                 holder[newKey] = key;
-                arr[i] = newKey;
+                keys[i] = newKey;
             }
-            arr.sort(function (a, b) {
+            keys.sort(function (a, b) {
                 return parseInt(a) - parseInt(b);
             })
-            for (var i = 0; i < arr.length; i++) {
-                arr[i] = holder[arr[i]];
+            for (var i = 0; i < keys.length; i++) {
+                keys[i] = holder[keys[i]];
             }
 
-            return arr;
+            return keys;
 
         }
 
 
         //初始化得到结果集
-        function initSKU() {
-            var i, keys = getObjKeys(skuMap);
+        function serializeSkuMap() {
+            var i, keys = getKeys(skuMap);
             for (i = 0; i < keys.length; i++) {
                 var key = keys[i];//一条SKU信息key
                 var sku = skuMap[key];    //一条SKU信息value
@@ -208,8 +214,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                     add2SKUResult(tempKey, sku);
                 }
 
-                //结果集接放入SKUResult
-                SKUResult[key] = {
+                serializedSkuMap[key] = {
                     count:  sku.count,
                     prices: [sku.price]
                 }
@@ -218,11 +223,11 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 //初始化用户选择事件
         $(function () {
-            initSKU();
+            serializeSkuMap();
             $('.' + SKU_CLS).each(function () {
                 var self = $(this);
                 var attr_id = self.attr('data-value');
-                if (!SKUResult[attr_id]) {
+                if (!serializedSkuMap[attr_id]) {
                     self.attr(DISABLED_CLS, DISABLED_CLS);
                 }
             }).click(function () {
@@ -248,7 +253,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                               });*/
                              selectedIds = sortKeys(selectedIds);
                              var len = selectedIds.length;
-                             var prices = SKUResult[selectedIds.join(';')].prices;
+                             var prices = serializedSkuMap[selectedIds.join(';')].prices;
                              var maxPrice = Math.max.apply(Math, prices);
                              var minPrice = Math.min.apply(Math, prices);
                              $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
@@ -267,18 +272,16 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                                  }
                                  testAttrIds = testAttrIds.concat($(this).attr('data-value'));
                                  testAttrIds = sortKeys(testAttrIds);
-                                 if (!SKUResult[testAttrIds.join(';')]) {
+                                 if (!serializedSkuMap[testAttrIds.join(';')]) {
                                      $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                                  } else {
                                      $(this).removeClass(DISABLED_CLS);
                                  }
                              });
                          } else {
-                             //设置默认价格
-                             $('#price').text('--');
                              //设置属性状态
                              $('.' + SKU_CLS).each(function () {
-                                 SKUResult[$(this).attr('data-value')] ? $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                                 serializedSkuMap[$(this).attr('data-value')] ? $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                              })
                          }
                      });
