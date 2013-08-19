@@ -103,8 +103,18 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     }
 
 
+    function normalizeSkuMap(skuMap) {
+        var newSkuMap = {};
+        for (var key in skuMap) {
+            var newKey = key.replace(/^;|;$/gi, '');
+            newSkuMap[newKey] = newSkuMap[key];
+        }
+        return newSkuMap;
+    }
+
+
     var defConfig = {
-        skuClass:      'J_TSKU', //
+        skuClass:      'J_TSKU',
         selectedClass: 'selected',
         disabledClass: 'disabled'
     };
@@ -123,16 +133,11 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
         var skuMap = config.skuMap;
-        debugger;
 
 
 //测试结果集
-        var tempData = {};
-        for (var key in skuMap) {
-            var newKey = key.replace(/^;|;$/gi, '');
-            tempData[newKey] = skuMap[key];
-        }
-        skuMap = tempData;
+
+        skuMap = normalizeSkuMap(skuMap);
 //保存最后的组合结果信息
         var SKUResult = {};
 
