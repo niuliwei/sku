@@ -1,3 +1,11 @@
+/**
+ *  SKU (stock keeping unit) Component
+ *  @author: jianfei
+ *  @email: jianfei@taobao.com
+ *  @ref: http://ued.taobao.com/blog/2012/07/sku-search-algorithm/
+ *
+ * */
+
 KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
@@ -58,7 +66,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     }
 
     function serializeSkuMap(skuMap, serializedSkuMap, self) {
-        
+
         var i, j,
             keys = getKeys(skuMap),
             skuLength = self.length;
@@ -97,7 +105,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         return keys;
     }
 
-    function getKeyLength (skuMap){
+    function getKeyLength(skuMap) {
         for (var key in skuMap) {
             return key.split(';').length;
         }
