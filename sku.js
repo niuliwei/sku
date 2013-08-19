@@ -130,6 +130,8 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
     var defConfig = {
+        _required:         ['root', 'skuMap'],
+        root:             null,
         skuClass:         'J_TSKU',
         selectedClass:    'selected',
         disabledClass:    'disabled',
@@ -150,6 +152,14 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
         self.config = S.merge(defConfig, cfg);
 
+
+        S.each(self.config._required, function(req){
+            if (!self.config.req) {
+                throw 'SKU：缺少配置项 ' + req;
+            }
+        })
+
+
         var SELECTED_CLS = self.config.selectedClass,
             DISABLED_CLS = self.config.disabledClass,
             SKU_CLS = self.config.skuClass,
@@ -159,9 +169,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         var skuMap = self.config.skuMap,
             serializedSkuMap = self.config.serializedSkuMap;
 
-        if (!skuMap) {
-            return S.log('SKU: skuMap 为空，无法初始化');
-        }
+
 
 
         skuMap = normalizeSkuMap(skuMap);
