@@ -1,44 +1,6 @@
 KISSY.add('sku', function (S, DOM, Node, Event) {
 
 
-    /**
-     * K-combinations
-     *
-     * Get k-sized combinations of elements in a set.
-     *
-     * Usage:
-     *   k_combinations(set, k)
-     *
-     * Parameters:
-     *   set: Array of objects of any type. They are treated as unique.
-     *   k: size of combinations to search for.
-     *
-     * Return:
-     *   Array of found combinations, size of a combination is k.
-     *
-     * Examples:
-     *
-     *   k_combinations([1, 2, 3], 1)
-     *   -> [[1], [2], [3]]
-     *
-     *   k_combinations([1, 2, 3], 2)
-     *   -> [[1,2], [1,3], [2, 3]
-     *
-     *   k_combinations([1, 2, 3], 3)
-     *   -> [[1, 2, 3]]
-     *
-     *   k_combinations([1, 2, 3], 4)
-     *   -> []
-     *
-     *   k_combinations([1, 2, 3], 0)
-     *   -> []
-     *
-     *   k_combinations([1, 2, 3], -1)
-     *   -> []
-     *
-     *   k_combinations([], 0)
-     *   -> []
-     */
     function k_combinations(set, k) {
         var i, j, combs, head, tailcombs;
 
@@ -71,23 +33,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         return combs;
     }
 
-
-    /**
-     * Combinations
-     *
-     * Get all possible combinations of elements in a set.
-     *
-     * Usage:
-     *   combinations(set)
-     *
-     * Examples:
-     *
-     *   combinations([1, 2, 3])
-     *   -> [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
-     *
-     *   combinations([1])
-     *   -> [[1]]
-     */
     function combinations(set) {
         var k, i, combs, k_combs;
         combs = [];
@@ -112,11 +57,83 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         return newSkuMap;
     }
 
+    function serializeSkuMap(skuMap, serializedSkuMap) {
+        var i, keys = getKeys(skuMap);
+        for (i = 0; i < keys.length; i++) {
+            var key = keys[i];//一条SKU信息key
+            var sku = skuMap[key];    //一条SKU信息value
+            var skuKeyAttrs = key.split(";"); //SKU信息key属性值数组
+            var len = skuKeyAttrs.length;
+
+            var combs = combinations(skuKeyAttrs);
+
+            var j = 0;
+            for (; j < len; j++) {
+                putResult(skuKeyAttrs[j], sku, serializedSkuMap);
+            }
+
+            for (; j < combs.length - 1; j++) {
+                var tempKey = sortKeys(combs[j]).join(';');
+                putResult(tempKey, sku, serializedSkuMap);
+            }
+
+            serializedSkuMap[key] = {
+                count:  sku.count,
+                prices: [sku.price]
+            }
+        }
+    }
+
+    //获得对象的key
+    function getKeys(obj) {
+        var keys = [];
+        for (var key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key))
+                keys.push(key);
+        }
+        return keys;
+    }
+
+//把组合的key放入结果集SKUResult
+    function putResult(key, sku, serializedSkuMap) {
+        if (serializedSkuMap[key]) {
+            serializedSkuMap[key].count += sku.count;
+            serializedSkuMap[key].prices.push(sku.price);
+        } else {
+            serializedSkuMap[key] = {
+                count:  sku.count,
+                prices: [sku.price]
+            };
+        }
+    }
+
+    function sortKeys(keys) {
+        var holder = {},
+            i, key, newKey;
+
+        for (i = 0; i < keys.length; i++) {
+            key = keys[i];
+            newKey = key.replace(';');
+            holder[newKey] = key;
+            keys[i] = newKey;
+        }
+        keys.sort(function (a, b) {
+            return parseInt(a) - parseInt(b);
+        })
+        for (i = 0; i < keys.length; i++) {
+            keys[i] = holder[keys[i]];
+        }
+
+        return keys;
+
+    }
+
 
     var defConfig = {
         skuClass:         'J_TSKU',
         selectedClass:    'selected',
         disabledClass:    'disabled',
+        attrName:         'data-value',
         skuMap:           null,
         serializedSkuMap: {}
     };
@@ -132,7 +149,8 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
         var SELECTED_CLS = config.selectedClass,
             DISABLED_CLS = config.disabledClass,
-            SKU_CLS = config.skuClass;
+            SKU_CLS = config.skuClass,
+            ATTR_NAME = config.attrName;
 
 
         var skuMap = config.skuMap,
@@ -146,87 +164,12 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         skuMap = normalizeSkuMap(skuMap);
 
 
-//获得对象的key
-        function getKeys(obj) {
-            var keys = [];
-            for (var key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key))
-                    keys.push(key);
-            }
-            return keys;
-        }
-
-//把组合的key放入结果集SKUResult
-        function add2SKUResult(key, sku) {
-            if (serializedSkuMap[key]) {
-                serializedSkuMap[key].count += sku.count;
-                serializedSkuMap[key].prices.push(sku.price);
-            } else {
-                serializedSkuMap[key] = {
-                    count:  sku.count,
-                    prices: [sku.price]
-                };
-            }
-        }
-
-        // Sort keys in
-        function sortKeys(keys) {
-
-            var holder = {},
-                i, key, newKey;
-
-            for (i = 0; i < keys.length; i++) {
-                key = keys[i];
-                newKey = key.replace(';');
-                holder[newKey] = key;
-                keys[i] = newKey;
-            }
-            keys.sort(function (a, b) {
-                return parseInt(a) - parseInt(b);
-            })
-            for (var i = 0; i < keys.length; i++) {
-                keys[i] = holder[keys[i]];
-            }
-
-            return keys;
-
-        }
-
-
-        //初始化得到结果集
-        function serializeSkuMap() {
-            var i, keys = getKeys(skuMap);
-            for (i = 0; i < keys.length; i++) {
-                var key = keys[i];//一条SKU信息key
-                var sku = skuMap[key];    //一条SKU信息value
-                var skuKeyAttrs = key.split(";"); //SKU信息key属性值数组
-                var len = skuKeyAttrs.length;
-
-                var combs = combinations(skuKeyAttrs);
-
-                var j = 0;
-                for (; j < len; j++) {
-                    add2SKUResult(skuKeyAttrs[j], sku);
-                }
-
-                for (; j < combs.length - 1; j++) {
-                    var tempKey = sortKeys(combs[j]).join(';');
-                    add2SKUResult(tempKey, sku);
-                }
-
-                serializedSkuMap[key] = {
-                    count:  sku.count,
-                    prices: [sku.price]
-                }
-            }
-        }
-
 //初始化用户选择事件
         $(function () {
-            serializeSkuMap();
+            serializeSkuMap(skuMap, serializedSkuMap);
             $('.' + SKU_CLS).each(function () {
                 var self = $(this);
-                var attr_id = self.attr('data-value');
+                var attr_id = self.attr(ATTR_NAME);
                 if (!serializedSkuMap[attr_id]) {
                     self.attr(DISABLED_CLS, DISABLED_CLS);
                 }
@@ -237,15 +180,13 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                              return;
                          }
 
-                         // 切换被点击SKU 的class，去除其所在属性其它的sku 的 class
                          self.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
                          var selectedObjs = $('.' + SELECTED_CLS);
                          if (selectedObjs.length) {
-                             //获得组合key价格
                              var selectedIds = [];
                              selectedObjs.each(function () {
-                                 selectedIds.push($(this).attr('data-value'));
+                                 selectedIds.push($(this).attr(ATTR_NAME));
                              });
                              /*
                               selectedIds.sort(function(value1, value2) {
@@ -263,14 +204,14 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                                  var siblingsSelectedObj = $(this).siblings('.' + SELECTED_CLS);
                                  var testAttrIds = [];//从选中节点中去掉选中的兄弟节点
                                  if (siblingsSelectedObj.length) {
-                                     var siblingsSelectedObjId = siblingsSelectedObj.attr('data-value');
+                                     var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
                                      for (var i = 0; i < len; i++) {
                                          (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
                                      }
                                  } else {
                                      testAttrIds = selectedIds.concat();
                                  }
-                                 testAttrIds = testAttrIds.concat($(this).attr('data-value'));
+                                 testAttrIds = testAttrIds.concat($(this).attr(ATTR_NAME));
                                  testAttrIds = sortKeys(testAttrIds);
                                  if (!serializedSkuMap[testAttrIds.join(';')]) {
                                      $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
@@ -279,9 +220,9 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                                  }
                              });
                          } else {
-                             //设置属性状态
                              $('.' + SKU_CLS).each(function () {
-                                 serializedSkuMap[$(this).attr('data-value')] ? $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                                 serializedSkuMap[$(this).attr(ATTR_NAME)] ?
+                                 $(this).removeClass(DISABLED_CLS) : $(this).addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                              })
                          }
                      });
@@ -295,7 +236,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             S.log('destroyed');
         }
     });
-
 
     return SKU;
 }, {requires: ['dom', 'node', 'event']});

@@ -114,9 +114,10 @@
 
     S.use('sku', function (S, SKU) {
         var config = {
-            skuClass:      'J_TSKU', //
+            skuClass:      'J_TSKU',
             selectedClass: 'selected',
             disabledClass: 'disabled',
+            attrName: 'data-value',
             skuMap:        {
                 ";20525:9507519;1627207:30156;1630696:6536025;12304035:116177;":   {
                     "skuId":    "30171814678",
@@ -369,7 +370,7 @@
             }
         }
 
-        new SKU(config);
+        var sku = new SKU(config);
     });
 
 })(KISSY);
