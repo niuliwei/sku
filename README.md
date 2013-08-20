@@ -1,9 +1,7 @@
 ## 通用 SKU 选择器
 
-
-
 ### 调用方法与配置项
-```javascrip
+```javascript
 KISSY.use('sku', function(S, SKU){
     var sku = new SKU({
     root: '#sku', // SKU 区块的根节点
