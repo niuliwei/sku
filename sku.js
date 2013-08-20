@@ -177,11 +177,13 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             }
         });
 
+        self.config.skuMap = normalizeSkuMap(self.config.skuMap);
+
         var skuMap = self.config.skuMap,
             serializedSkuMap = self.config.serializedSkuMap;
-        skuMap = normalizeSkuMap(skuMap);
 
         self.length = getKeyLength(skuMap); // SKU 实例的长度
+        self.lastSelectedLength = 0;
 
         self.uid = S.guid();
 
@@ -203,10 +205,11 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
             target.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-            var selectedObjs = S.all('.' + SELECTED_CLS, ROOT);
+            var selectedObjs = S.all('.' + SELECTED_CLS, ROOT),
+                selectedLength = selectedObjs.length,
+                selectedIds = [];
 
-            if (selectedObjs.length) {
-                var selectedIds = [];
+            if (selectedLength) {
                 selectedObjs.each(function (el) {
                     selectedIds.push(el.attr(ATTR_NAME));
                 });
@@ -251,6 +254,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                     el.removeClass(DISABLED_CLS) : $el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                 })
             }
+            self.check(selectedIds);
         });
 
 
@@ -260,15 +264,41 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         station: S.mix({}, S.EventTarget),
 
         broadcast: function (data) {
-            data = S.merge(data, { id: self.uid})
+            data = S.merge(data, { id: this.uid});
             this.station.fire(data);
+            S.log(data);
         },
 
+
+        check: function (selectedIds) {
+
+            var selectedLength = selectedIds.length;
+            this.broadcast({
+                               news:      'selectionChanged',
+                               selection: selectedIds
+                           });
+
+            if (selectedLength === this.length) {
+                this.broadcast({
+                                   news: 'skuFound',
+                                   sku:  this.config.skuMap[selectedIds.join(';')]
+                               })
+            }
+
+            if (this.lastSelectedLength === this.length) {
+                this.broadcast({news: 'skuLost'});
+            }
+
+            this.lastSelectedLength = selectedLength;
+        },
+
+
         destroy: function () {
-            S.log('destroyed');
+            // TODO
         }
 
     });
 
     return SKU;
+
 }, {requires: ['dom', 'node', 'event']});
