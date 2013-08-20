@@ -30,5 +30,5 @@ KISSY.use('sku', function(S, SKU){
     * 自定义事件对象结构：
         * ```news```: 'skuLost'
         
-*所有的自定义事件对象均有 id 字段，值为 SKU 实例的唯一 ID* 
+所有的自定义事件对象均有 id 字段，值为 SKU 实例的唯一 ID
        
