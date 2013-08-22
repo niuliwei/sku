@@ -18,20 +18,26 @@ KISSY.use('sku', function(S, SKU){
 #### selectionChanged
 
 * 触发机制：用户点击引起的颗粒状态变化
-* 自定义事件对象结构：
-    * ```news```: ``` 'selectionChanged' ```
+* 自定义事件数据：
     * ```selection ``` : 当前选中的 SKU 颗粒的 ID
         
 #### skuFound
-* 触发机制：匹配到 SKU 记录
-* 自定义事件对象结构：
-    * ```news ``` : ``` 'skuFound' ```
+* 触发机制：SKU 匹配成功
+* 自定义事件数据：
     * ```sku``` : SKU 对象
 
 #### skuLost 
 * 触发机制：SKU 匹配失败
+* 自定义事件数据：无
+
+
+#### skuChanged
+* 触发机制：SKU 匹配变更
 * 自定义事件对象结构：
-    * ```news```: ```'skuLost'```
+    * ```sku``` : SKU 对象
+    
+#### 注意
         
-所有的自定义事件对象均有 id 字段，值为 SKU 实例的唯一 ID
+* 所有的自定义事件对象均有 uid 字段，值为 SKU 实例的唯一 ID
+* ```skuChanged``` 触发时，不再触发```skuFound``` 与 ```skuLost```
        
