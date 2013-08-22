@@ -97,19 +97,24 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     }
 
     function getKeys(obj) {
+
         var keys = [];
+
         for (var key in obj) {
             if (Object.prototype.hasOwnProperty.call(obj, key))
                 keys.push(key);
+
         }
         return keys;
     }
 
     function getKeyLength(skuMap) {
+
         for (var key in skuMap) {
             return key.split(';').length;
         }
-    };
+
+    }
 
     function putResult(key, sku, serializedSkuMap) {
         if (serializedSkuMap[key]) {
@@ -163,7 +168,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     function SKU(cfg) {
 
         if (!cfg) {
-            S.log('SKU: 配置为空，无法初始化');
+            S.log('SKU: 配置为空，无法初始化', 'error');
             return;
         }
 
@@ -182,9 +187,8 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
         var skuMap = self.config.skuMap,
             serializedSkuMap = self.config.serializedSkuMap;
 
-        self.length = getKeyLength(skuMap); // SKU 实例的长度
+        self.length = getKeyLength(skuMap);
         self.lastSelectedLength = 0;
-
         self.uid = S.guid();
 
         var ROOT = self.config.root,
@@ -249,7 +253,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                 });
             } else {
                 S.all('.' + SKU_CLS, ROOT).each(function (el) {
-                    el = S.one(el);
                     serializedSkuMap[el.attr(ATTR_NAME)] ?
                     el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                 })
@@ -279,7 +282,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             event = event.split(' ');
 
             S.each(event, function (evt) {
-                self.station.on(evt,callback);
+                self.station.on(evt, callback);
             });
         },
 
