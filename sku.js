@@ -261,18 +261,27 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     }
 
     S.augment(SKU, {
+
         station: S.mix({}, S.EventTarget),
 
         broadcast: function (event, data) {
+
             data = S.merge(data, { uid: this.uid});
             this.station.fire(event, data);
             S.log(event, data);
+
         },
 
         subscribe: function (event, callback) {
-            this.station.on(event, callback)
-        },
 
+            var self = this;
+
+            event = event.split(' ');
+
+            S.each(event, function (evt) {
+                self.station.on(evt,callback);
+            });
+        },
 
         check: function (selectedIds) {
 
@@ -295,7 +304,6 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
             this.lastSelectedLength = selectedLength;
         },
-
 
         destroy: function () {
             // TODO
