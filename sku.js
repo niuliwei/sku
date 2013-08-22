@@ -251,7 +251,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                 S.all('.' + SKU_CLS, ROOT).each(function (el) {
                     el = S.one(el);
                     serializedSkuMap[el.attr(ATTR_NAME)] ?
-                    el.removeClass(DISABLED_CLS) : $el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                    el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                 })
             }
             self.check(selectedIds);
@@ -263,30 +263,34 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
     S.augment(SKU, {
         station: S.mix({}, S.EventTarget),
 
-        broadcast: function (data) {
-            data = S.merge(data, { id: this.uid});
-            this.station.fire(data);
-            S.log(data);
+        broadcast: function (event, data) {
+            data = S.merge(data, { uid: this.uid});
+            this.station.fire(event, data);
+            S.log(event, data);
+        },
+
+        subscribe: function (event, callback) {
+            this.station.on(event, callback)
         },
 
 
         check: function (selectedIds) {
 
             var selectedLength = selectedIds.length;
-            this.broadcast({
-                               news:      'selectionChanged',
-                               selection: selectedIds
-                           });
+            this.broadcast('selectionChanged', {
+                selection: selectedIds
+            });
 
-            if (selectedLength === this.length) {
-                this.broadcast({
-                                   news: 'skuFound',
-                                   sku:  this.config.skuMap[selectedIds.join(';')]
-                               })
-            }
-
-            if (this.lastSelectedLength === this.length) {
-                this.broadcast({news: 'skuLost'});
+            if (selectedLength === this.length && this.lastSelectedLength === this.length) {
+                this.broadcast('skuChanged', {
+                    sku: this.config.skuMap[selectedIds.join(';')]
+                });
+            } else if (selectedLength === this.length) {
+                this.broadcast('skuFound', {
+                    sku: this.config.skuMap[selectedIds.join(';')]
+                })
+            } else if (this.lastSelectedLength === this.length) {
+                this.broadcast('skuLost');
             }
 
             this.lastSelectedLength = selectedLength;

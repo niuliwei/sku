@@ -372,6 +372,9 @@
         }
 
         var sku = new SKU(config);
+        sku.subscribe('skuFound', function (evt) {
+            S.log('匹配到 SKU，ID：' + evt.sku.skuId);
+        });
     });
 
 })(KISSY);
