@@ -257,7 +257,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                     el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                 })
             }
-            self.check(selectedIds);
+            self.check(selectedIds, selectedObjs);
         });
 
 
@@ -286,11 +286,12 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             });
         },
 
-        check: function (selectedIds) {
+        check: function (selectedIds, selectedObjs) {
 
             var selectedLength = selectedIds.length;
             this.broadcast('selectionChanged', {
-                selection: selectedIds
+                selection: selectedIds,
+                particles: selectedObjs
             });
 
             if (selectedLength === this.length && this.lastSelectedLength === this.length) {

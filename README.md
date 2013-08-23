@@ -12,6 +12,9 @@ KISSY.use('sku', function(S, SKU){
 	});
 })
 ```
+
+
+
 ### 自定义事件与其对象
 
 
