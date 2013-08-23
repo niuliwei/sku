@@ -1,6 +1,6 @@
 ## 通用商品 SKU 选择器
 
-### 调用方法与配置项
+### 初始化方法与配置项
 ```javascript
 KISSY.use('sku', function(S, SKU){
     var sku = new SKU({
@@ -11,6 +11,22 @@ KISSY.use('sku', function(S, SKU){
         attrName:      'data-value',    // SKU 节点上记录 ID 的属性名称
 	});
 })
+```
+### 订阅事件
+
+调用实例上的```subscribe```方法：
+```javascript
+KISSY.use('sku', function(S, SKU){
+    var sku = new SKU(config);
+    sku.subscribe('skuFound', function(){
+       // Your code
+    })
+})
+```
+
+同时订阅多个事件，可以用空格分隔事件名：
+```javascript
+sku.subscribe('skuFound skuLost', callback);
 ```
 
 
