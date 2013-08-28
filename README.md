@@ -18,7 +18,7 @@ KISSY.use('sku', function(S, SKU){
 ```javascript
 KISSY.use('sku', function(S, SKU){
     var sku = new SKU(config);
-    sku.subscribe('skuFound', function(){
+    sku.subscribe('skuFound', function(evt){
        // Your code
     })
 })
