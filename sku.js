@@ -195,11 +195,16 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
             SELECTED_CLS = self.config.selectedClass,
             DISABLED_CLS = self.config.disabledClass,
             SKU_CLS = self.config.skuClass,
-            ATTR_NAME = self.config.attrName;
+            ATTR_NAME = self.config.attrName,
+            PARTICLES = self.particles = S.all('.' + SKU_CLS, ROOT);
+
+        if (!PARTICLES.length) {
+            return S.log('初始化失败');
+        }
 
         serializeSkuMap(skuMap, serializedSkuMap, self);
 
-        S.all('.' + SKU_CLS, ROOT).on('click', function (evt) {
+        PARTICLES.on('click', function (evt) {
 
             var target = S.one(evt.currentTarget);
 
@@ -226,7 +231,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
 
                 // $('#price').text(maxPrice > minPrice ? minPrice + "-" + maxPrice : maxPrice);
 
-                S.all("." + SKU_CLS, ROOT).each(function (el) {
+                PARTICLES.each(function (el) {
 
                     if (S.inArray(el[0], selectedObjs) || el[0] === target[0]) {
                         return;
@@ -252,7 +257,7 @@ KISSY.add('sku', function (S, DOM, Node, Event) {
                     }
                 });
             } else {
-                S.all('.' + SKU_CLS, ROOT).each(function (el) {
+                PARTICLES.each(function (el) {
                     serializedSkuMap[el.attr(ATTR_NAME)] ?
                     el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                 })
