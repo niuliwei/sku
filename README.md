@@ -58,5 +58,5 @@ sku.subscribe('skuFound skuLost', callback);
 #### 注意
         
 * 所有的自定义事件对象均有 uid 字段，值为 SKU 实例的唯一 ID
-* ```skuChanged``` 触发时，不再触发```skuFound``` 与 ```skuLost```
+* ```skuChanged``` 触发时，不再触发```skuFound``` 与 ```skuLost```。所以，如果只关心 SKU 的变动，建议使用 ```sku.subscribe('skuFound skuChanged', function(){})```
        
