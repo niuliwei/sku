@@ -1,5 +1,5 @@
 (function (S) {
-    S.add('rich-sku', function (S, RichBase, Node) {
+    S.add('sku', function (S, RichBase, Node) {
 
         var proto = {
                 constructor:     function () {
