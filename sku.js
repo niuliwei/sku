@@ -22,28 +22,39 @@
                         DISABLED_CLS = self.get('disabledClass'),
                         SKU_CLS = self.get('skuClass'),
                         ATTR_NAME = self.get('attrName'),
-                        serializedSkuMap = self.get('serializedSkuMap'),
+                        MAP = self.get('serializedSkuMap'),
                         ROOT = self.get('root'),
-                        PARTICLES = S.all('.' + SKU_CLS, ROOT);
+                        PARTICLES = S.all('.' + SKU_CLS, ROOT),
+                        PROPS = {};
 
 
-                    PARTICLES.on('click', function (evt) {
+                    PARTICLES.on('click',function (evt) {
 
-                        var target = S.one(evt.currentTarget);
+                        var target = S.one(evt.currentTarget),
+                            prop = target.attr(ATTR_NAME).split(':')[0];
+
 
                         if (target.hasClass(DISABLED_CLS)) {
                             return;
                         }
 
+                        if (!target.hasClass(SELECTED_CLS)) {
+                            PROPS[prop] = target;
+                        } else {
+                            PROPS[prop] = null;
+                        }
+
+                        self.set('props', PROPS);
+
                         target.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-                        var selectedPtcl = S.all('.' + SELECTED_CLS, ROOT),
+                        var selectedPtcl = self.get('selectedParticles'),
                             selectedLength = selectedPtcl.length,
                             selectedIds = [];
 
                         if (!selectedLength) {
                             PARTICLES.each(function (el) {
-                                serializedSkuMap[el.attr(ATTR_NAME)] ?
+                                MAP[el.attr(ATTR_NAME)] ?
                                 el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                             })
                         } else {
@@ -52,8 +63,9 @@
                             });
 
                             selectedIds = self.sortKeys(selectedIds);
+
                             var len = selectedIds.length;
-                            var prices = serializedSkuMap[selectedIds.join(';')].prices;
+                            var prices = MAP[selectedIds.join(';')].prices;
 //                            var maxPrice = Math.max.apply(Math, prices);
 //                            var minPrice = Math.min.apply(Math, prices);
 
@@ -74,9 +86,11 @@
                                 } else {
                                     testAttrIds = selectedIds.concat();
                                 }
+
                                 testAttrIds = testAttrIds.concat(el.attr(ATTR_NAME));
                                 testAttrIds = self.sortKeys(testAttrIds);
-                                if (!serializedSkuMap[testAttrIds.join(';')]) {
+
+                                if (!MAP[testAttrIds.join(';')]) {
                                     el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
                                 } else {
                                     el.removeClass(DISABLED_CLS);
@@ -84,7 +98,12 @@
                             });
                         }
                         self.check(selectedIds, selectedPtcl);
-                    });
+                    }).each(function (ptcl) {
+                                var prop = ptcl.attr(ATTR_NAME).split(':')[0];
+                                if (!(prop in PROPS)) {
+                                    PROPS[prop] = null;
+                                }
+                            });
 
                 },
                 k_combinations:  function (set, k) {
@@ -302,31 +321,53 @@
 
             attrs = {
                 ATTRS: {
-                    _required:        {
+                    _required:         {
                         value: ['root', 'skuMap']
                     },
-                    root:             {
-                        value: null
+                    root:              {
+                        value:  null,
+                        setter: function (s) {
+                            return S.one(s);
+                        }
                     },
-                    skuClass:         {
+                    skuClass:          {
                         value: 'J_TSKU'
                     },
-                    selectedClass:    {
+                    selectedClass:     {
                         value: 'selected'
                     },
-                    disabledClass:    {
+                    disabledClass:     {
                         value: 'disabled'
                     },
-                    attrName:         {
+                    attrName:          {
                         value: 'data-value'
                     },
-                    skuMap:           {
+                    skuMap:            {
                         value: null
                     },
-                    serializedSkuMap: {
+                    serializedSkuMap:  {
                         value: {}
                     },
-                    uid:              {
+                    props:             {
+                        value: {}
+                    },
+                    selectedParticles: {
+                        value:  [],
+                        getter: function () {
+                            var self = this;
+                            var props = self.get('props'),
+                                ret = [];
+
+                            for (var p in  props) {
+                                if (props[p]) {
+                                    ret.push(props[p][0]);
+                                }
+                            }
+
+                            return S.all(ret);
+                        }
+                    },
+                    uid:               {
                         value: S.guid()
                     }
                 }
