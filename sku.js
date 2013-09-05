@@ -2,7 +2,7 @@
     S.add('sku', function (S, RichBase, Node) {
 
         var proto = {
-                constructor:     function () {
+                constructor: function () {
 
                     var self = this;
 
@@ -18,6 +18,12 @@
                     self.serializeSkuMap();
                     self.setLength();
 
+                },
+
+                render:         function () {
+
+                    var self = this;
+
                     var SELECTED_CLS = self.get('selectedClass'),
                         DISABLED_CLS = self.get('disabledClass'),
                         SKU_CLS = self.get('skuClass'),
@@ -28,85 +34,89 @@
                         PROPS = {};
 
 
-                    PARTICLES.on('click',function (evt) {
-
-                        var target = S.one(evt.currentTarget),
-                            prop = target.attr(ATTR_NAME).split(':')[0];
-
-
-                        if (target.hasClass(DISABLED_CLS)) {
-                            return;
-                        }
-
-                        if (!target.hasClass(SELECTED_CLS)) {
-                            PROPS[prop] = target;
-                        } else {
+                    PARTICLES.each(function (ptcl) {
+                        var prop = ptcl.attr(ATTR_NAME).split(':')[0];
+                        if (!(prop in PROPS)) {
                             PROPS[prop] = null;
                         }
 
-                        self.set('props', PROPS);
 
-                        target.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
+                        ptcl.on('click', function (evt) {
 
-                        var selectedPtcl = self.get('selectedParticles'),
-                            selectedLength = selectedPtcl.length,
-                            selectedIds = [];
+                            var target = S.one(evt.currentTarget);
 
-                        if (!selectedLength) {
-                            PARTICLES.each(function (el) {
-                                MAP[el.attr(ATTR_NAME)] ?
-                                el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
-                            })
-                        } else {
-                            selectedPtcl.each(function (el) {
-                                selectedIds.push(el.attr(ATTR_NAME));
-                            });
+                            if (target.hasClass(DISABLED_CLS)) {
+                                return;
+                            }
 
-                            selectedIds = self.sortKeys(selectedIds);
+                            var prop = target.attr(ATTR_NAME).split(':')[0];
 
-                            var len = selectedIds.length;
-                            var prices = MAP[selectedIds.join(';')].prices;
-//                            var maxPrice = Math.max.apply(Math, prices);
-//                            var minPrice = Math.min.apply(Math, prices);
+                            if (!target.hasClass(SELECTED_CLS)) {
+                                PROPS[prop] = target;
+                            } else {
+                                PROPS[prop] = null;
+                            }
 
-                            PARTICLES.each(function (el) {
+                            self.set('props', PROPS);
 
-                                if (S.inArray(el[0], selectedPtcl) || el[0] === target[0]) {
-                                    return;
-                                }
+                            target.toggleClass(SELECTED_CLS).siblings().removeClass(SELECTED_CLS);
 
-                                var siblingsSelectedObj = el.siblings('.' + SELECTED_CLS),
-                                    testAttrIds = [];
+                            var selectedPtcl = self.get('selectedParticles'),
+                                selectedLength = selectedPtcl.length,
+                                selectedIds = [];
 
-                                if (siblingsSelectedObj.length) {
-                                    var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
-                                    for (var i = 0; i < len; i++) {
-                                        (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
+                            if (!selectedLength) {
+                                PARTICLES.each(function (el) {
+                                    MAP[el.attr(ATTR_NAME)] ?
+                                    el.removeClass(DISABLED_CLS) : el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                                })
+                            } else {
+                                selectedPtcl.each(function (el) {
+                                    selectedIds.push(el.attr(ATTR_NAME));
+                                });
+
+                                selectedIds = self.sortKeys(selectedIds);
+
+                                var len = selectedIds.length;
+
+                                PARTICLES.each(function (el) {
+
+                                    if (S.inArray(el[0], selectedPtcl) || el[0] === target[0]) {
+                                        return;
                                     }
-                                } else {
-                                    testAttrIds = selectedIds.concat();
-                                }
 
-                                testAttrIds = testAttrIds.concat(el.attr(ATTR_NAME));
-                                testAttrIds = self.sortKeys(testAttrIds);
+                                    var siblingsSelectedObj = el.siblings('.' + SELECTED_CLS),
+                                        testAttrIds = [];
 
-                                if (!MAP[testAttrIds.join(';')]) {
-                                    el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
-                                } else {
-                                    el.removeClass(DISABLED_CLS);
-                                }
-                            });
+                                    if (siblingsSelectedObj.length) {
+                                        var siblingsSelectedObjId = siblingsSelectedObj.attr(ATTR_NAME);
+                                        for (var i = 0; i < len; i++) {
+                                            (selectedIds[i] != siblingsSelectedObjId) && testAttrIds.push(selectedIds[i]);
+                                        }
+                                    } else {
+                                        testAttrIds = selectedIds.concat();
+                                    }
+
+                                    testAttrIds = testAttrIds.concat(el.attr(ATTR_NAME));
+                                    testAttrIds = self.sortKeys(testAttrIds);
+
+                                    if (!MAP[testAttrIds.join(';')]) {
+                                        el.addClass(DISABLED_CLS).removeClass(SELECTED_CLS);
+                                    } else {
+                                        el.removeClass(DISABLED_CLS);
+                                    }
+                                });
+                            }
+                            self.check(selectedIds, selectedPtcl);
+                        });
+
+                        if (!ptcl.siblings().length) {
+                            ptcl.fire('click');
                         }
-                        self.check(selectedIds, selectedPtcl);
-                    }).each(function (ptcl) {
-                                var prop = ptcl.attr(ATTR_NAME).split(':')[0];
-                                if (!(prop in PROPS)) {
-                                    PROPS[prop] = null;
-                                }
-                            });
 
+                    });
                 },
-                k_combinations:  function (set, k) {
+                k_combinations: function (set, k) {
                     var self = this;
                     var i, j, combs, head, tailcombs;
 
@@ -138,7 +148,7 @@
                     }
                     return combs;
                 },
-                combinations:    function (set) {
+                combinations:   function (set) {
                     var self = this;
                     var k, i, combs, k_combs;
                     combs = [];
@@ -152,11 +162,15 @@
                     }
                     return combs;
                 },
+
                 normalizeSkuMap: function () {
-                    var self = this,
-                        skuMap = self.get('skuMap'),
+
+                    var self = this;
+
+                    var skuMap = self.get('skuMap'),
                         newSkuMap = {},
                         key;
+
                     for (key in skuMap) {
                         var newKey = key.replace(/^;|;$/gi, '');
                         newSkuMap[newKey] = skuMap[key];
@@ -165,8 +179,9 @@
                 },
                 serializeSkuMap: function () {
 
-                    var self = this,
-                        skuMap = self.get('skuMap'),
+                    var self = this;
+
+                    var skuMap = self.get('skuMap'),
                         serializedSkuMap = {};
 
                     var i, j,
@@ -204,8 +219,8 @@
 
                 getKeys:   function () {
 
-                    var self = this,
-                        skuMap = self.get('skuMap'),
+                    var self = this;
+                    var skuMap = self.get('skuMap'),
                         keys = [];
 
                     for (var key in skuMap) {
@@ -216,8 +231,9 @@
                     return keys;
                 },
                 setLength: function () {
-                    var self = this,
-                        skuMap = self.get('skuMap');
+                    var self = this;
+
+                    var skuMap = self.get('skuMap');
 
                     var length = (function (m) {
                         for (var k in m) {
@@ -229,7 +245,8 @@
                     self.set('lastSelectedLength', 0);
 
                 },
-                sortKeys:  function (keys) {
+
+                sortKeys: function (keys) {
 
                     var holder = {},
                         i, key, newKey;
@@ -252,6 +269,7 @@
                     return keys;
 
                 },
+
                 putResult: function (key, sku, serializedSkuMap) {
                     if (serializedSkuMap[key]) {
                         serializedSkuMap[key].stock += parseInt(sku.stock);
@@ -263,13 +281,11 @@
                         };
                     }
                 },
-                station:   S.mix({}, S.EventTarget),
 
                 broadcast: function (event, data) {
 
                     data = S.merge(data, { uid: this.uid});
                     this.station.fire(event, data);
-                    S.log(event, data);
 
                 },
 
@@ -277,7 +293,7 @@
 
                     var self = this;
 
-                    event = event.split(' ');
+                    event = event.split(/\s+/g);
 
                     S.each(event, function (evt) {
                         self.station.on(evt, callback);
@@ -311,6 +327,8 @@
 
                     self.set('lastSelectedLength', selectedLength);
                 },
+
+                station: S.mix({}, S.EventTarget),
 
                 destroy: function () {
                     // TODO

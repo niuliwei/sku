@@ -282,6 +282,8 @@
         sku.subscribe('skuFound skuChanged', function (evt) {
             S.log('匹配到 SKU，ID：' + evt.sku.skuId);
         });
+        
+        sku.render();
     });
 
 })(KISSY);
