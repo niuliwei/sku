@@ -10,6 +10,7 @@ KISSY.use('sku', function(S, SKU){
         disabledClass: 'disabled',      // 禁用的 SKU 颗粒节点 class
         attrName:      'data-value',    // SKU 节点上记录 ID 的属性名称
 	});
+	sku.render();                       // 实例初始化
 })
 ```
 ### 订阅事件
