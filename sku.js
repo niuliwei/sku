@@ -103,6 +103,11 @@
                                 if (!(prop in PROPS)) {
                                     PROPS[prop] = null;
                                 }
+
+                                if (!ptcl.siblings().length) {
+                                    ptcl.fire('click');
+                                }
+
                             });
 
                 },
@@ -278,7 +283,7 @@
                     var self = this;
 
                     event = event.split(/\s/g);
-                    
+
                     S.each(event, function (evt) {
                         self.station.on(evt, callback);
                     });
