@@ -277,8 +277,8 @@
 
                     var self = this;
 
-                    event = event.split(' ');
-
+                    event = event.split(/\s/g);
+                    
                     S.each(event, function (evt) {
                         self.station.on(evt, callback);
                     });
