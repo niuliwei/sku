@@ -281,7 +281,11 @@
         var sku = new SKU(config);
         sku.subscribe('skuFound skuChanged', function (evt) {
             S.log('匹配到 SKU，ID：' + evt.sku.skuId);
+                        console.log(sku.getCurrentSku());
+
         });
+        sku.subscribe('selectionChanged',function(){
+        })
         
         sku.render();
     });

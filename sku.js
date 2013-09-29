@@ -300,30 +300,46 @@
                     });
                 },
 
+                getCurrentSku: function(){
+                    var self = this;
+                    return self.get('currentSku');
+                },
+
                 check: function (selectedIds, selectedObjs) {
 
                     var self = this,
                         length = self.get('length'),
                         lastSelectedLength = self.get('lastSelectedLength'),
-                        skuMap = self.get('skuMap');
+                        skuMap = self.get('skuMap'),
+                        sku, event;
 
                     var selectedLength = selectedIds.length;
+
+                    if (selectedLength === length) {
+
+                        sku = skuMap[selectedIds.join(';')];
+                        event = lastSelectedLength === length ? 'skuChanged' : 'skuFound';
+
+                        self.set('currentSku', sku);
+
+                        self.broadcast(event, {
+                            sku: sku
+                        });
+
+                    } else {
+
+                        self.set('currentSku', null);
+
+                        if (lastSelectedLength === length) {
+                            self.broadcast('skuLost');
+                        }
+
+                    }
+
                     self.broadcast('selectionChanged', {
                         selection: selectedIds,
                         particles: selectedObjs
                     });
-
-                    if (selectedLength === length && lastSelectedLength === length) {
-                        self.broadcast('skuChanged', {
-                            sku: skuMap[selectedIds.join(';')]
-                        });
-                    } else if (selectedLength === length) {
-                        self.broadcast('skuFound', {
-                            sku: skuMap[selectedIds.join(';')]
-                        })
-                    } else if (lastSelectedLength === length) {
-                        self.broadcast('skuLost');
-                    }
 
                     self.set('lastSelectedLength', selectedLength);
                 },
@@ -368,6 +384,9 @@
                     },
                     props:             {
                         value: {}
+                    },
+                    currentSku:        {
+                        value: null
                     },
                     selectedParticles: {
                         value:  [],
