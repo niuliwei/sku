@@ -203,6 +203,10 @@
                         var sku = skuMap[key];    //一条SKU信息value
                         var skuKeyAttrs = key.split(";"); //SKU信息key属性值数组
 
+                        if (!parseInt(sku.stock, 10)) {
+                            continue;
+                        }
+
                         var combs = self.combinations(skuKeyAttrs);
 
                         j = 0;
