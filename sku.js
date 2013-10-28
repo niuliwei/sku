@@ -169,14 +169,24 @@
 
                     var skuMap = self.get('skuMap'),
                         newSkuMap = {},
-                        key;
+                        key, newKey, pieces;
 
                     for (key in skuMap) {
-                        var newKey = key.replace(/^;|;$/gi, '');
+
+                        newKey = key.replace(/^;|;$/gi, '');
+
+                        pieces = newKey.split(';');
+                        pieces.sort(function (a, b) {
+                            return parseInt(a.split(':')[0], 10) > parseInt(b.split(':')[0], 10)
+                        });
+
+                        newKey = pieces.join(';');
                         newSkuMap[newKey] = skuMap[key];
                     }
+
                     self.set('skuMap', newSkuMap);
                 },
+
                 serializeSkuMap: function () {
 
                     var self = this;
@@ -230,6 +240,7 @@
                     }
                     return keys;
                 },
+
                 setLength: function () {
                     var self = this;
 
