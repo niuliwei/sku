@@ -116,7 +116,9 @@
 
                     });
                 },
+
                 k_combinations: function (set, k) {
+
                     var self = this;
                     var i, j, combs, head, tailcombs;
 
@@ -148,7 +150,9 @@
                     }
                     return combs;
                 },
+
                 combinations:   function (set) {
+
                     var self = this;
                     var k, i, combs, k_combs;
                     combs = [];
@@ -367,7 +371,6 @@
 
             },
 
-
             attrs = {
                 ATTRS: {
                     _required:         {
@@ -425,11 +428,9 @@
                 }
             };
 
-
         var SKU = RichBase.extend(proto, attrs);
 
         return SKU;
-
 
     }, {requires: ['rich-base', 'node']})
 })(KISSY);
