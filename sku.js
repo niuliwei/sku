@@ -180,8 +180,9 @@
                         newKey = key.replace(/^;|;$/gi, '');
 
                         pieces = newKey.split(';');
+
                         pieces.sort(function (a, b) {
-                            return parseInt(a.split(':')[0], 10) > parseInt(b.split(':')[0], 10)
+                            return parseInt(a, 10) - parseInt(b, 10);
                         });
 
                         newKey = pieces.join(';');
