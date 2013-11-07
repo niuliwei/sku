@@ -6,6 +6,8 @@
 
                     var self = this;
 
+                    self.set('uid', S.guid());
+
                     SKU.superclass.constructor.apply(self, arguments);
 
                     S.each(self.get('_required'), function (req) {
@@ -304,19 +306,24 @@
 
                 broadcast: function (event, data) {
 
-                    data = S.merge(data, { uid: this.uid});
-                    this.station.fire(event, data);
+                    var self = this;
+
+                    data = S.merge(data, { uid: self.get('uid')});
+                    self.station.fire(event, data);
 
                 },
 
-                subscribe: function (event, callback) {
-
+                subscribe: function (events, callback) {
                     var self = this;
 
-                    event = event.split(/\s+/g);
+                    events = events.split(/\s+/g);
 
-                    S.each(event, function (evt) {
-                        self.station.on(evt, callback);
+                    S.each(events, function (event) {
+                        self.station.on(event, function (evt) {
+                            if (evt.uid == self.get('uid') && callback) {
+                                callback.call(self, evt);
+                            }
+                        });
                     });
                 },
 
@@ -424,7 +431,7 @@
                         }
                     },
                     uid:               {
-                        value: S.guid()
+                        value: null
                     }
                 }
             };
